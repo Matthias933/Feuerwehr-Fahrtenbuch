@@ -85,8 +85,7 @@ class _HomePageState extends State<HomePage> {
                         child: Container(
                       child: Column(
                         children: [
-                          Image.network(
-                              'https://www.feuerwehr-nenzing.at/wp-content/uploads/2022/01/cropped-logo-feuerwehr-nenzing.png'),
+                          Image.asset('images/logo.png'),
                           SizedBox(
                             height: 10,
                           ),
@@ -147,7 +146,7 @@ class _HomePageState extends State<HomePage> {
 
   void showCustomDialog() {
     Management.tokenExpired(context);
-    
+
     if (currentIndex == 0) {
       personManagement.createPerson();
     } else if (currentIndex == 1) {
