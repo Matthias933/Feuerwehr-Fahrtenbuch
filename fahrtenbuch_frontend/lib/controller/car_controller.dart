@@ -13,7 +13,7 @@ class CarController {
 
     try {
       final response = await http.get(
-        Uri.parse(baseUrl + 'car'),
+        Uri.parse('${baseUrl}car'),
         headers: {
           'Authorization': 'Bearer ${Management.accessToken}',
           'Content-Type': 'application/json',
@@ -25,11 +25,11 @@ class CarController {
         cars = jsonData
             .map((e) => Car.fromJson(e as Map<String, dynamic>))
             .toList();
-        debugPrint('fetched ' + cars.length.toString() + ' cars');
+        debugPrint('fetched ${cars.length} cars');
       } else if (response.statusCode == 401) {
         debugPrint('Error: Unauthorized');
       } else {
-        debugPrint('ERROR: Could not fetch data.' + response.statusCode.toString());
+        debugPrint('ERROR: Could not fetch data.${response.statusCode}');
       }
     } catch (e) {
       debugPrint(e.toString());
@@ -41,7 +41,7 @@ class CarController {
   Future<int> deleteCar(int id) async {
     try {
       final response = await http.delete(
-        Uri.parse(baseUrl + 'car/$id'),
+        Uri.parse('${baseUrl}car/$id'),
         headers: {
           'Authorization': 'Bearer ${Management.accessToken}',
           'Content-Type': 'application/json',
@@ -52,7 +52,7 @@ class CarController {
         debugPrint('Car deleted successfully');
         return 0;
       } else {
-        debugPrint('ERROR: Could not delete car.' + response.statusCode.toString());
+        debugPrint('ERROR: Could not delete car.${response.statusCode}');
       }
     } catch (e) {
       debugPrint('Error: $e');
@@ -66,7 +66,7 @@ class CarController {
       String jsonBody = jsonEncode(car.toJson());
 
       final response = await http.put(
-        Uri.parse(baseUrl + 'car'),
+        Uri.parse('${baseUrl}car'),
         headers: {
           'Authorization': 'Bearer ${Management.accessToken}',
           'Content-Type': 'application/json',
@@ -93,7 +93,7 @@ class CarController {
       String jsonBody = jsonEncode(car.toJson());
 
       final response = await http.post(
-        Uri.parse(baseUrl + 'car'),
+        Uri.parse('${baseUrl}car'),
         headers: {
           'Authorization': 'Bearer ${Management.accessToken}',
           'Content-Type': 'application/json',

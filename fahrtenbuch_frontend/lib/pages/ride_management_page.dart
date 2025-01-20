@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, avoid_unnecessary_containers
 
+import 'package:fahrtenbuch_frontend/controller/management.dart';
 import 'package:fahrtenbuch_frontend/models/ride.dart';
 import 'package:fahrtenbuch_frontend/util/car/car_management.dart';
 import 'package:fahrtenbuch_frontend/util/datetime_input.dart';
@@ -143,7 +144,8 @@ class _RideManagementPageState extends State<RideManagementPage> {
                           ),
                           subtitle: Text(
                             'Datum: ${filteredRides[index].Date}\n'
-                            'Kommandant ${filteredRides[index].Commander!.FirstName} ${filteredRides[index].Commander!.LastName}\n'
+                            'Kommandant: ${filteredRides[index].Commander!.FirstName} ${filteredRides[index].Commander!.LastName}\n'
+                            'Verwendetes Fahrzeug: ${filteredRides[index].Vehicle!.CarNumber}\n'
                             'Gefahrene Kilometer: ${filteredRides[index].KilometerEnd - filteredRides[index].KilometerStart}',
                             style: TextStyle(color: Colors.black),
                           ),
@@ -154,12 +156,12 @@ class _RideManagementPageState extends State<RideManagementPage> {
                               children: [
                                 IconButton(
                                   onPressed: () =>
-                                      rideManagement.editRide(index),
+                                      editRide(index),
                                   icon: Icon(Icons.edit),
                                 ),
                                 IconButton(
                                   onPressed: () =>
-                                      rideManagement.deleteRide(index),
+                                      deleteRide(index),
                                   icon: Icon(
                                     Icons.delete,
                                     color: Colors.red,
@@ -188,5 +190,14 @@ class _RideManagementPageState extends State<RideManagementPage> {
         ),
       ),
     );
+  }
+
+  void editRide(int index){
+    Management.tokenExpired(context);
+    rideManagement.editRide(index);
+  }
+  void deleteRide(int index){
+    Management.tokenExpired(context);
+    rideManagement.editRide(index);
   }
 }

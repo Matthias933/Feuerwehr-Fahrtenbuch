@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:fahrtenbuch_frontend/controller/management.dart';
 import 'package:fahrtenbuch_frontend/util/car/car_management.dart';
 import 'package:flutter/material.dart';
 
@@ -40,8 +41,8 @@ class _CarManagementPageState extends State<CarManagementPage> {
                       mainAxisSize: MainAxisSize
                           .min,
                       children: [
-                        IconButton(onPressed: () => carManagement.editCar(index), icon: Icon(Icons.edit)),
-                        IconButton(onPressed: () => carManagement.deleteCar(index), icon: Icon(Icons.delete, color: Colors.red,)),
+                        IconButton(onPressed: () => editCar(index), icon: Icon(Icons.edit)),
+                        IconButton(onPressed: () => deleteCar(index), icon: Icon(Icons.delete, color: Colors.red,)),
                       ],
                     ),
                   ),
@@ -49,5 +50,14 @@ class _CarManagementPageState extends State<CarManagementPage> {
               },
             ),
     );
+  }
+
+  void editCar(int index){
+    Management.tokenExpired(context);
+    carManagement.editCar(index);
+  }
+  void deleteCar(int index){
+    Management.tokenExpired(context);
+    carManagement.deleteCar(index);
   }
 }

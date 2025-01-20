@@ -1,3 +1,4 @@
+import 'package:fahrtenbuch_frontend/controller/management.dart';
 import 'package:fahrtenbuch_frontend/util/person/person_management.dart';
 import 'package:flutter/material.dart';
 
@@ -38,8 +39,8 @@ class _PersonManagementPageState extends State<PersonManagementPage> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min, 
                       children: [
-                        IconButton(onPressed: () => personManagement.editPerson(index), icon: Icon(Icons.edit)),
-                        IconButton(onPressed: () => personManagement.deletePerson(index), icon: Icon(Icons.delete, color: Colors.red,)),
+                        IconButton(onPressed: () => editPerson(index), icon: Icon(Icons.edit)),
+                        IconButton(onPressed: () => deletePerson(index), icon: Icon(Icons.delete, color: Colors.red,)),
                       ],
                     ),
                   ),
@@ -47,5 +48,14 @@ class _PersonManagementPageState extends State<PersonManagementPage> {
               },
             ),
     );
+  }
+
+  void editPerson(int index){
+    Management.tokenExpired(context);
+    personManagement.editPerson(index);
+  }
+  void deletePerson(int index){
+    Management.tokenExpired(context);
+    personManagement.deletePerson(index);
   }
 }

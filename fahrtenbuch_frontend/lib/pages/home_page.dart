@@ -1,7 +1,4 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_interpolation_to_compose_strings
-
-import 'dart:io';
-
 import 'package:fahrtenbuch_frontend/controller/management.dart';
 import 'package:fahrtenbuch_frontend/pages/car_management_page.dart';
 import 'package:fahrtenbuch_frontend/pages/person_management_page.dart';
@@ -52,7 +49,7 @@ class _HomePageState extends State<HomePage> {
         });
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await management.ShowLoginPage(context);
+      await Management.showLoginPage(context);
       debugPrint('login finished');
       setState(() {
 
@@ -149,6 +146,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   void showCustomDialog() {
+    Management.tokenExpired(context);
+    
     if (currentIndex == 0) {
       personManagement.createPerson();
     } else if (currentIndex == 1) {
