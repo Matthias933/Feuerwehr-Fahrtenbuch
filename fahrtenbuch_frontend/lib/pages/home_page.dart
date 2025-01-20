@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_interpolation_to_compose_strings
 
+import 'dart:io';
+
 import 'package:fahrtenbuch_frontend/controller/management.dart';
 import 'package:fahrtenbuch_frontend/pages/car_management_page.dart';
 import 'package:fahrtenbuch_frontend/pages/person_management_page.dart';
@@ -29,12 +31,9 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    appPages.addAll([
-      PersonManagementPage(),
-      CarManagementPage(),
-      RideManagementPage(),
-    ]);
-    management = Management(setStateCallback: () {setState(() {});});
+    management = Management(setStateCallback: () {
+      setState(() {});
+    });
     personManagement = PersonManagement(
         context: context,
         setStateCallback: () {
@@ -47,66 +46,87 @@ class _HomePageState extends State<HomePage> {
         });
 
     rideManagement = RideManagement(
-       context: context,
+        context: context,
         setStateCallback: () {
           setState(() {});
         });
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-    management.ShowLoginPage(context);
-  });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await management.ShowLoginPage(context);
+      debugPrint('login finished');
+      setState(() {
+
+        appPages.addAll([
+        PersonManagementPage(),
+        CarManagementPage(),
+        RideManagementPage(),
+      ]);
+        //fetch cars
+        carManagement.fetchCars();
+      });  
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: appPages[currentIndex],
+      body: appPages.isEmpty
+          ? null
+          : appPages[currentIndex],
       appBar: AppBar(
         title: Text(appBarNames[currentIndex]),
         centerTitle: true,
       ),
-      drawer: Drawer(
-        backgroundColor: Colors.white,
-        child: ListView(
-          children: [
-            DrawerHeader(
-              child: Center(
-                child: Container(
-                  child: Column(
-                    children: [
-                      Image.network('https://www.feuerwehr-nenzing.at/wp-content/uploads/2022/01/cropped-logo-feuerwehr-nenzing.png'),
-                      SizedBox(height: 10,),
-                      Text('Fahrtenbuch', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20))
-                    ],
+      drawer: appPages.isEmpty
+          ? null
+          : Drawer(
+              backgroundColor: Colors.white,
+              child: ListView(
+                children: [
+                  DrawerHeader(
+                    child: Center(
+                        child: Container(
+                      child: Column(
+                        children: [
+                          Image.network(
+                              'https://www.feuerwehr-nenzing.at/wp-content/uploads/2022/01/cropped-logo-feuerwehr-nenzing.png'),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Text('Fahrtenbuch',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20))
+                        ],
+                      ),
+                    )),
                   ),
-                )
+                  ListTile(
+                    leading: Icon(Icons.group),
+                    title: Text(
+                      'Personen',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    onTap: () => navigatePage(0),
+                  ),
+                  ListTile(
+                      leading: Icon(Icons.drive_eta),
+                      title: Text(
+                        'Fahrzeuge',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      onTap: () => navigatePage(1)),
+                  ListTile(
+                      leading: Icon(Icons.route),
+                      title: Text(
+                        'Fahrten',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      onTap: () => navigatePage(2)),
+                ],
               ),
             ),
-            ListTile(
-              leading: Icon(Icons.group),
-              title: Text(
-                'Personen',
-                style: TextStyle(color: Colors.black),
-              ),
-              onTap: () => navigatePage(0),
-            ),
-            ListTile(
-                leading: Icon(Icons.drive_eta),
-                title: Text(
-                  'Fahrzeuge',
-                  style: TextStyle(color: Colors.black),
-                ),
-                onTap: () => navigatePage(1)),
-            ListTile(
-                leading: Icon(Icons.route),
-                title: Text(
-                  'Fahrten',
-                  style: TextStyle(color: Colors.black),
-                ),
-                onTap: () => navigatePage(2)),
-          ],
-        ),
-      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => displayPopUp(),
         backgroundColor: Colors.red,
@@ -137,5 +157,4 @@ class _HomePageState extends State<HomePage> {
       rideManagement.createRide();
     } else {}
   }
-
 }

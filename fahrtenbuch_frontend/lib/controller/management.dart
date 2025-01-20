@@ -33,11 +33,11 @@ class Management {
     }
   }
 
-  void ShowLoginPage(BuildContext context){
+  Future<void> ShowLoginPage(BuildContext context) async{
     TextEditingController nameController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
 
-    showDialog(context: context, barrierDismissible: false, builder: (BuildContext context){
+    await showDialog(context: context, barrierDismissible: false, builder: (BuildContext context){
       return LoginPage(nameController: nameController, passwordController: passwordController, onSubmit: () {signIn(nameController.text, passwordController.text, context);},);
     });
   }
