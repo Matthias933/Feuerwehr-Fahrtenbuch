@@ -5,6 +5,7 @@ import 'package:fahrtenbuch_v1/classes/auth_controller.dart';
 import 'package:fahrtenbuch_v1/entities/car.dart';
 import 'package:fahrtenbuch_v1/entities/person.dart';
 import 'package:fahrtenbuch_v1/entities/ride.dart';
+import 'package:fahrtenbuch_v1/entities/rideType.dart';
 import 'package:fahrtenbuch_v1/entities/role.dart';
 import 'package:fahrtenbuch_v1/database/context.dart';
 import 'package:fahrtenbuch_v1/pages/home_page.dart';
@@ -19,12 +20,16 @@ void main() async {
   Hive.registerAdapter(RoleAdapter());
   Hive.registerAdapter(RideAdapter());
   Hive.registerAdapter(CarAdapter());
+  Hive.registerAdapter(RideTypeAdapter());
 
   var personBox = await Hive.openBox('personBox');
   var rideBox = await Hive.openBox('rideBox');
+  var rideTypeBox = await Hive.openBox('rideTypeBox');
   var carBox = await Hive.openBox('carBox');
   var tokenBox = await Hive.openBox('tokenBox');
   var carNameBox = await Hive.openBox('carNameBox');
+  var kilometerBox = await Hive.openBox('kilometerBox');
+  var previousRideBox = await Hive.openBox('previousRideBox');
 
   //Get people from server
   ApiController apiController = ApiController();
@@ -35,6 +40,7 @@ void main() async {
   await authController.signIn();
   await apiController.fetchPeople();
   await apiController.fetchCars();
+  await apiController.fetchRideTypes();
 
   final List<dynamic> rides = List.from(dbContext.rideList); //creates a copy of the actual list
   if(rides.isNotEmpty){

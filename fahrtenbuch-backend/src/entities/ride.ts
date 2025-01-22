@@ -7,6 +7,7 @@ import {
 import { Role } from './role';
 import { Person } from './person';
 import { Car } from './car';
+import { RideType } from './rideType';
 
 @Entity()
 export class Ride {
@@ -18,6 +19,9 @@ export class Ride {
 
   @ManyToOne(() => Person, {onDelete: 'CASCADE'})
   commander: Person;
+
+  @ManyToOne(() => RideType)
+  rideType: RideType;
 
   @ManyToOne(() => Car, (car) => car.rides, {onDelete: 'CASCADE'})
   car: Car;

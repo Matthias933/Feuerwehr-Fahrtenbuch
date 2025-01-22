@@ -1,5 +1,5 @@
-import 'package:fahrtenbuch_frontend/util/password_input.dart';
-import 'package:fahrtenbuch_frontend/util/text_input.dart';
+import 'package:fahrtenbuch_frontend/util/inputs/password_input.dart';
+import 'package:fahrtenbuch_frontend/util/inputs/text_input.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatelessWidget {

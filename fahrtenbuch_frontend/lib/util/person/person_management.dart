@@ -86,23 +86,23 @@ class PersonManagement {
   Navigator.of(context).pop();
 }
 
-  void createPerson(){
+  Future<void> createPerson() async{
     showDialog(
     barrierDismissible: false,
     context: context,
     builder: (BuildContext context) {
       return PersonEditPopup(
-        dialogName: 'Person bearbeiten',
+        dialogName: 'Person Erstellen',
         person: null,
-        onSubmit: (String firstName, String lastName, bool isActive, bool isDriver, bool isCommander) {
-          confirmCreate(firstName, lastName, isActive, isDriver, isCommander);
+        onSubmit: (String firstName, String lastName, bool isActive, bool isDriver, bool isCommander) async {
+          await confirmCreate(firstName, lastName, isActive, isDriver, isCommander);
         },
       );
     },
   );
   }
 
-  void confirmCreate(String firstName, String lastName, bool isActive, bool isDriver, bool isCommander) async {
+  Future<void> confirmCreate(String firstName, String lastName, bool isActive, bool isDriver, bool isCommander) async {
     List<Role> roles = [];
 
     if (isDriver) {
@@ -145,7 +145,7 @@ class PersonManagement {
 
 
 
-  void fetchPeople() async {
+  Future<void> fetchPeople() async {
     debugPrint('fetching all people');
     persons = await controller.fetchPeople();
     setStateCallback();

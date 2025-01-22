@@ -1,11 +1,13 @@
 import 'package:fahrtenbuch_frontend/models/car.dart';
-import 'package:fahrtenbuch_frontend/util/text_input.dart';
+import 'package:fahrtenbuch_frontend/util/inputs/check_box_input.dart';
+import 'package:fahrtenbuch_frontend/util/inputs/number_input.dart';
+import 'package:fahrtenbuch_frontend/util/inputs/text_input.dart';
 import 'package:flutter/material.dart';
 
 class CarEditPopup extends StatefulWidget {
   final String dialogName;
   final Car? car;
-  final Function(String) onSubmit;
+  final Function(String, String, String, int, bool) onSubmit;
   const CarEditPopup({super.key, required this.dialogName, required this.car, required this.onSubmit});
 
   @override
@@ -14,14 +16,25 @@ class CarEditPopup extends StatefulWidget {
 
 class _CarEditPopupState extends State<CarEditPopup> {
   late TextEditingController carNumberController;
-
+  late TextEditingController manufacturerController;
+  late TextEditingController buildyearController;
+  late TextEditingController typeController;
+  late bool isAcitve;
   @override
   void initState() {
     super.initState();
     if (widget.car != null) {
       carNumberController = TextEditingController(text: widget.car!.CarNumber);
+      manufacturerController = TextEditingController(text: widget.car!.Manufacturer);
+      typeController = TextEditingController(text: widget.car!.Type);
+      buildyearController = TextEditingController(text: widget.car!.Buildyear.toString());
+      isAcitve = widget.car!.IsActive;
     } else {
       carNumberController = TextEditingController();
+      manufacturerController = TextEditingController();
+      typeController = TextEditingController();
+      buildyearController = TextEditingController();
+      isAcitve = false;
     }
   }
 
@@ -40,12 +53,27 @@ class _CarEditPopupState extends State<CarEditPopup> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-            
               CustomTextInput(
                 labelText: 'Fahrzeugnummer',
                 controller: carNumberController,
               ),
-              SizedBox(height: 10)
+              const SizedBox(height: 10),
+              CustomTextInput(
+                labelText: 'Hersteller',
+                controller: manufacturerController,
+              ),
+              const SizedBox(height: 10),
+               CustomTextInput(
+                labelText: 'Fahrzeugtyp',
+                controller: typeController,
+              ),
+              const SizedBox(height: 10),
+              CustomNumberInput(
+                labelText: 'Baujahr', 
+                controller: buildyearController
+              ),
+              const SizedBox(height: 10),
+              CustomCheckBoxInput(description: 'Aktiv', value: isAcitve, onChanged: (value) {setState(() {isAcitve = value;});})
             ],
           ),
         ],
@@ -55,15 +83,19 @@ class _CarEditPopupState extends State<CarEditPopup> {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: Text('Abbrechen', style: TextStyle(color: Colors.black)),
+          child: const Text('Abbrechen', style: TextStyle(color: Colors.black)),
         ),
         TextButton(
           onPressed: () {
             widget.onSubmit(
               carNumberController.text,
+              manufacturerController.text,
+              typeController.text,
+              int.parse(buildyearController.text),
+              isAcitve
             );
           },
-          child: Text('Speichern', style: TextStyle(color: Colors.green)),
+          child: const Text('Speichern', style: TextStyle(color: Colors.green)),
         ),
       ],
     );

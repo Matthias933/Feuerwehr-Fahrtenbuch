@@ -6,6 +6,7 @@ import 'package:fahrtenbuch_v1/entities/car.dart';
 import 'package:fahrtenbuch_v1/entities/person.dart';
 import 'package:fahrtenbuch_v1/entities/ride.dart';
 import 'package:fahrtenbuch_v1/database/context.dart';
+import 'package:fahrtenbuch_v1/entities/rideType.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -39,7 +40,7 @@ class ApiController {
 
     try {
       final response = await http.get(
-        Uri.parse(baseUrl + 'people'),
+        Uri.parse(baseUrl + 'activePeople'),
         headers: {
           'Authorization': 'Bearer ${context.accessToken}',
           'Content-Type': 'application/json',
@@ -61,6 +62,35 @@ class ApiController {
     } catch (e) {debugPrint('error: $e');}
   }
 
+  Future<void> fetchRideTypes() async {
+    if (!isConnected) return;
+
+    List<RideType> rideTypes;
+
+    try {
+      final response = await http.get(
+        Uri.parse(baseUrl + 'rideTypes'),
+        headers: {
+          'Authorization': 'Bearer ${context.accessToken}',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonData = jsonDecode(response.body);
+        rideTypes = jsonData
+            .map((e) => RideType.fromJson(e as Map<String, dynamic>))
+            .toList();
+        context.setRideTypes(rideTypes);
+        debugPrint('fetched ' + rideTypes.length.toString() + ' rideTypes');
+      } else if (response.statusCode == 401) {
+        debugPrint('Error: Unauthorized');
+      } else {
+        debugPrint('ERROR: Could not fetch data.' + response.statusCode.toString());
+      }
+    } catch (e) {debugPrint('error: $e');}
+  }
+
   Future<void> fetchCars() async {
     if (!isConnected) return;
 
@@ -68,7 +98,7 @@ class ApiController {
 
     try {
       final response = await http.get(
-        Uri.parse(baseUrl + 'car'),
+        Uri.parse(baseUrl + 'activeCar'),
         headers: {
           'Authorization': 'Bearer ${context.accessToken}',
           'Content-Type': 'application/json',

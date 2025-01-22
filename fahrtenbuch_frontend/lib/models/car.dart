@@ -3,30 +3,39 @@
 class Car {
   final int? Id;
   final String CarNumber;
+  final String Manufacturer;
+  final String Type;
+  final int Buildyear;
+  final bool IsActive;
 
   Car({
     this.Id,
-    required this.CarNumber
+    required this.CarNumber,
+    required this.Manufacturer,
+    required this.Type,
+    required this.Buildyear,
+    required this.IsActive
   });
 
    factory Car.fromJson(Map<String, dynamic> json) {
-    return switch (json) {
-      {
-        'id': int Id,
-        'carNumber': String CarNumber,
-      } =>
-        Car(
-          Id: json['id'] as int,
-          CarNumber: json['carNumber'] as String,
-        ),
-      _ => throw const FormatException('Failed to load Cars.'),
-    };
+    return Car(
+      Id: json['id'] as int,
+      CarNumber: json['carNumber'] as String,
+      Manufacturer: json['manufacturer'] as String,
+      Type: json['type'] as String,
+      Buildyear: json['buildyear'] as int,
+      IsActive: json['isActive'] as bool,
+    );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': Id,
-      'carNumber': CarNumber
+      'carNumber': CarNumber,
+      'manufacturer': Manufacturer,
+      'type': Type,
+      'buildyear': Buildyear,
+      'isActive': IsActive
     };
   }
 }

@@ -8,6 +8,7 @@ import { identity } from 'rxjs';
 import { Car } from './entities/car';
 import internal from 'stream';
 import { RideDto } from './entities/rideDto';
+import { RideType } from './entities/rideType';
 
 @Injectable()
 export class AppService {
@@ -20,10 +21,15 @@ export class AppService {
     private rideRepository: Repository<Ride>,
     @InjectRepository(Car)
     private carRepository: Repository<Car>,
+    @InjectRepository(RideType)
+    private rideTypeRepository: Repository<RideType>
   ) {}
 
-  getPeople(): Promise<Person[]> {
-    return this.personRepository.find({ relations: { roles: true } });
+  getPeople(filter: boolean): Promise<Person[]> {
+    if(filter){
+      return this.personRepository.find({where: {isActive: true}, relations: { roles: true } });
+    }
+    return this.personRepository.find({relations: {roles: true}});
   }
 
   async deletePerson(id: number): Promise<void> {
@@ -71,10 +77,15 @@ export class AppService {
     person.roles = roles;
     await this.personRepository.save(person);
   }
-  
-  
+   
+  getRideTypes(): Promise<RideType[]>{
+    return this.rideTypeRepository.find();
+  }
 
-  getCar(): Promise<Car[]>{
+  getCar(filter: boolean): Promise<Car[]>{
+    if(filter){
+      return this.carRepository.find({where: {isActive: true}})
+    }
     return this.carRepository.find();
   }
 
@@ -90,6 +101,10 @@ export class AppService {
     }
   
     existingCar.carNumber = car.carNumber;
+    existingCar.buildyear = car.buildyear;
+    existingCar.isActive = car.isActive;
+    existingCar.manufacturer = car.manufacturer;
+    existingCar.type = car.type;
   
     await this.carRepository.save(existingCar);
   }
@@ -100,17 +115,14 @@ export class AppService {
   }
 
   getRide(): Promise<Ride[]> {
-    return this.rideRepository.find({relations: {driver: {roles: true}, commander: {roles: true}, car: true}});
-  }
-
-  async deleteRide(id: number): Promise<void> {
-    await this.rideRepository.delete(id);
+    return this.rideRepository.find({relations: {rideType: true, driver: {roles: true}, commander: {roles: true}, car: true}});
   }
 
   async postRide(createRideDto: RideDto): Promise<Ride> {
     const driver = await this.personRepository.findOne({ where: { id: createRideDto.driverId } });
     const commander = await this.personRepository.findOne({ where: { id: createRideDto.commanderId } });
     const car = await this.carRepository.findOne({where: {id: createRideDto.carId}});
+    const rideType = await this.rideTypeRepository.findOne({where:{id: createRideDto.rideTypeId}});
     if (!driver || !commander) {
       throw new Error('Driver or Commander not found');
     }
@@ -119,6 +131,7 @@ export class AppService {
     ride.car = car;
     ride.driver = driver;
     ride.commander = commander;
+    ride.rideType = rideType;
     ride.date = createRideDto.date;
     ride.rideDescription = createRideDto.rideDescription;
     ride.kilometerStart = createRideDto.kilometerStart;
@@ -146,6 +159,7 @@ export class AppService {
     const driver = await this.personRepository.findOne({ where: { id: ride.driverId } });
     const commander = await this.personRepository.findOne({ where: { id: ride.commanderId } });
     const car = await this.carRepository.findOne({where: {id: ride.carId}});
+    const rideType = await this.rideTypeRepository.findOne({where:{id: ride.rideTypeId}});
     if (!driver || !commander) {
       throw new Error('Driver or Commander not found');
     }
@@ -153,6 +167,7 @@ export class AppService {
     existingRide.car = car;
     existingRide.driver = driver;
     existingRide.commander = commander;
+    existingRide.rideType = rideType;
     existingRide.date = ride.date;
     existingRide.rideDescription = ride.rideDescription;
     existingRide.kilometerStart = ride.kilometerStart;
@@ -169,25 +184,73 @@ export class AppService {
   
     await this.rideRepository.save(existingRide);
   }
+
+  async rideTypeBootstrap(): Promise<RideType[]>{
+    const type1 = {
+      id: 1,
+      name: 'Einsatz'
+    }
+    const type2 = {
+      id: 2,
+      name: 'Übung'
+    }
+    const type3 = {
+      id: 3,
+      name: 'Bewegungsfahrt'
+    }
+    const type4 = {
+      id: 4,
+      name: 'Sonstiges'
+    }
+    await this.rideTypeRepository.save(type1);
+    await this.rideTypeRepository.save(type2);
+    await this.rideTypeRepository.save(type3);
+    await this.rideTypeRepository.save(type4);
+    return null;
+  }
   
   async carBootstrap(): Promise<Car[]> {
     const c1 = {
-      carNumber: 'Fahrzeug 1'
+      carNumber: 'Fahrzeug 1',
+      manufacturer: 'Default manufacturer',
+      type: 'default type',
+      buildyear: 2006,
+      isActive: true
     };
     const c2 = {
-      carNumber: 'Fahrzeug 2'
+      carNumber: 'Fahrzeug 2',
+      manufacturer: 'Default manufacturer',
+      type: 'default type',
+      buildyear: 2006,
+      isActive: true
     };
     const c3 = {
-      carNumber: 'Fahrzeug 3'
+      carNumber: 'Fahrzeug 3',
+      manufacturer: 'Default manufacturer',
+      type: 'default type',
+      buildyear: 2006,
+      isActive: true
     };
     const c4 = {
-      carNumber: 'Fahrzeug 4'
+      carNumber: 'Fahrzeug 4',
+      manufacturer: 'Default manufacturer',
+      type: 'default type',
+      buildyear: 2006,
+      isActive: true
     };
     const c5 = {
-      carNumber: 'Fahrzeug 5'
+      carNumber: 'Fahrzeug 5',
+      manufacturer: 'Default manufacturer',
+      type: 'default type',
+      buildyear: 2006,
+      isActive: true
     };
     const c6 = {
-      carNumber: 'Fahrzeug 6'
+      carNumber: 'Fahrzeug 6',
+      manufacturer: 'Default manufacturer',
+      type: 'default type',
+      buildyear: 2006,
+      isActive: true
     };
 
     this.carRepository.save(c1);

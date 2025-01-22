@@ -12,13 +12,14 @@ import { JwtStrategy } from './jwt.strategy';
 import { JwtAuthGuard } from './jwt.auth.guard';
 import { Ride } from './entities/ride';
 import { Car } from './entities/car';
+import { RideType } from './entities/rideType';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'sqlite',
       database: `./data/line.sqlite`,
-      entities: [Person, Role, Account, Ride, Car],
+      entities: [Person, Role, Account, Ride, Car, RideType],
       synchronize: true,
       logging: 'all',
     }),
@@ -26,7 +27,7 @@ import { Car } from './entities/car';
       secret: 'mysecretkey', 
       signOptions: { expiresIn: '1h' },
     }),
-    TypeOrmModule.forFeature([Person, Role, Account, Ride, Car]),
+    TypeOrmModule.forFeature([Person, Role, Account, Ride, Car, RideType]),
   ],
   controllers: [AppController, AuthController],
   providers: [AppService, AuthService, JwtStrategy, JwtAuthGuard],

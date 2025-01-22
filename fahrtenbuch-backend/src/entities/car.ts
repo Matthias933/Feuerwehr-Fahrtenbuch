@@ -18,6 +18,18 @@ export class Car {
   @Column()
   carNumber: String;
 
+  @Column()
+  manufacturer: String;
+
+  @Column()
+  type : String;
+
+  @Column()
+  buildyear: number
+
+  @Column({ default: true })
+  isActive: boolean;
+
   @OneToMany(() => Ride, (ride) => ride.car)
   rides: Ride[];
 }

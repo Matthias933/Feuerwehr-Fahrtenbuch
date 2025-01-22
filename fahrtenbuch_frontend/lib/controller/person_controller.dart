@@ -13,7 +13,7 @@ class PersonController {
 
     try {
       final response = await http.get(
-        Uri.parse(baseUrl + 'people'),
+        Uri.parse('${baseUrl}people'),
         headers: {
           'Authorization': 'Bearer ${Management.accessToken}',
           'Content-Type': 'application/json',
@@ -28,7 +28,7 @@ class PersonController {
       } else if (response.statusCode == 401) {
         debugPrint('Error: Unauthorized');
       } else {
-        debugPrint('ERROR: Could not fetch data.' + response.statusCode.toString());
+        debugPrint('ERROR: Could not fetch data.${response.statusCode}');
       }
     } catch (e) {
       debugPrint('Error $e');
@@ -40,7 +40,7 @@ class PersonController {
   Future<int> deletePerson(int id) async {
     try {
       final response = await http.delete(
-        Uri.parse(baseUrl + 'people/$id'),
+        Uri.parse('${baseUrl}people/$id'),
         headers: {
           'Authorization': 'Bearer ${Management.accessToken}',
           'Content-Type': 'application/json',
@@ -51,7 +51,7 @@ class PersonController {
         debugPrint('Person deleted successfully');
         return 0;
       } else {
-       debugPrint('ERROR: Could not delete person.' + response.statusCode.toString());
+       debugPrint('ERROR: Could not delete person.${response.statusCode}');
       }
     } catch (e) {
       debugPrint('Error: $e');
@@ -65,7 +65,7 @@ class PersonController {
     String jsonBody = jsonEncode(person.toJson());
 
     final response = await http.put(
-      Uri.parse(baseUrl + 'people'),
+      Uri.parse('${baseUrl}people'),
       headers: {
         'Authorization': 'Bearer ${Management.accessToken}',
         'Content-Type': 'application/json',
@@ -91,7 +91,7 @@ Future<int> createPerson(Person person) async{
     String jsonBody = jsonEncode(person.toJson());
 
     final response = await http.post(
-      Uri.parse(baseUrl + 'people'),
+      Uri.parse('${baseUrl}people'),
       headers: {
         'Authorization': 'Bearer ${Management.accessToken}',
         'Content-Type': 'application/json',

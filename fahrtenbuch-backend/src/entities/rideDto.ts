@@ -3,6 +3,7 @@ export class RideDto {
   carId: number;
   driverId: number;
   commanderId: number;
+  rideTypeId: number;
   date: string;
   rideDescription: string;
   kilometerStart: number;

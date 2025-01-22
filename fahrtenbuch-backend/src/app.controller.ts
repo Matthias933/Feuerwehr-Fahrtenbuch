@@ -8,15 +8,31 @@ import { JwtAuthGuard } from './jwt.auth.guard';
 import { Car } from './entities/car';
 import { RideDto } from './entities/rideDto';
 import { Role } from './entities/role';
+import { RideType } from './entities/rideType';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
+
+  @UseGuards(JwtAuthGuard)
+  @Get('rideTypes')
+  getRideTypes(): Promise<RideType[]> {
+    return this.appService.getRideTypes();
+  }
+
+  //used for managment app
   @UseGuards(JwtAuthGuard)
   @Get('people')
   getPeople(): Promise<Person[]> {
-    return this.appService.getPeople();
+    return this.appService.getPeople(false);
+  }
+
+  //used for client app
+  @UseGuards(JwtAuthGuard)
+  @Get('activePeople')
+  getActivePeople(): Promise<Person[]> {
+    return this.appService.getPeople(true);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -50,12 +66,6 @@ export class AppController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete('ride/:id') 
-  deleteRide(@Param('id') id: number): Promise<void> {
-    return this.appService.deleteRide(id); 
-  }
-
-  @UseGuards(JwtAuthGuard)
   @Put('ride')
   async editRide(@Body() ride: RideDto): Promise<void> {
     await this.appService.editRide(ride);
@@ -64,7 +74,13 @@ export class AppController {
   @UseGuards(JwtAuthGuard)
   @Get('car')
   getCar(): Promise<Car[]>{
-    return this.appService.getCar();
+    return this.appService.getCar(false);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('activeCar')
+  getActiveCars(): Promise<Car[]>{
+    return this.appService.getCar(true);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -85,16 +101,19 @@ export class AppController {
     await this.appService.createCar(car);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('bootstrap')
   doBootstrap(): Promise<Person[]> {
     return this.appService.bootstrap();
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('bootstrapCar')
   doBootstrapCar(): Promise<Car[]> {
     return this.appService.carBootstrap();
+  }
+
+  @Get('bootstrapRideType')
+  doBootstrapRideType(): Promise<RideType[]> {
+    return this.appService.rideTypeBootstrap();
   }
 
   @Get('roleBootstrap')
@@ -103,7 +122,5 @@ export class AppController {
   }
 
   @Post('checkConnection')
-  checkConnection(){
-    
-  }
+  checkConnection(){}
 }

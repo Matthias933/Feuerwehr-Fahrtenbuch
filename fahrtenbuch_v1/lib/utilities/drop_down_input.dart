@@ -6,16 +6,16 @@ class DropDown extends StatefulWidget {
   final List<String> inputValues;
   final String labelText;
   final Function(String?) onValueChanged;
-  final String? selectedValue;
 
-  const DropDown({super.key, required this.inputValues, required this.onValueChanged, required this.labelText, this.selectedValue});
+  DropDown({super.key, required this.inputValues, required this.onValueChanged, required this.labelText});
 
   @override
   _DropDownState createState() => _DropDownState();
 }
 
 class _DropDownState extends State<DropDown> {
-  late String? selectedValue = widget.selectedValue;
+  String? selectedValue;
+
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<String>(

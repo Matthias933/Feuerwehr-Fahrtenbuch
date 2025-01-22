@@ -1,7 +1,7 @@
 import 'package:fahrtenbuch_frontend/models/person.dart';
 import 'package:flutter/material.dart';
-import 'package:fahrtenbuch_frontend/util/check_box_input.dart';
-import 'package:fahrtenbuch_frontend/util/text_input.dart';
+import 'package:fahrtenbuch_frontend/util/inputs/check_box_input.dart';
+import 'package:fahrtenbuch_frontend/util/inputs/text_input.dart';
 
 class PersonEditPopup extends StatefulWidget {
   final String dialogName;

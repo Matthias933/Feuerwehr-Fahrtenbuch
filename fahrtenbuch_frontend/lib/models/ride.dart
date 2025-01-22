@@ -2,6 +2,7 @@
 
 import 'package:fahrtenbuch_frontend/models/car.dart';
 import 'package:fahrtenbuch_frontend/models/person.dart';
+import 'package:fahrtenbuch_frontend/models/rideType.dart';
 
 class Ride {
   final int? Id;
@@ -9,6 +10,7 @@ class Ride {
   final int? DriverId;
   final int? CommanderId;
   final String Date;
+  final int? RideTypeId;
   final String RideDescription;
   final int KilometerStart;
   final int KilometerEnd;
@@ -26,6 +28,7 @@ class Ride {
   final Car? Vehicle;
   final Person? Driver;
   final Person? Commander;
+  final RideType? Type;
 
   Ride({
     this.Id,
@@ -33,6 +36,7 @@ class Ride {
     required this.DriverId,
     required this.CommanderId,
     required this.Date,
+    required this.RideTypeId,
     required this.RideDescription,
     required this.KilometerStart,
     required this.KilometerEnd,
@@ -48,13 +52,15 @@ class Ride {
 
     this.Vehicle,
     this.Driver,
-    this.Commander
+    this.Commander,
+    this.Type
   });
 
   factory Ride.fromJson(Map<String, dynamic> json) {
     Person driver = Person.fromJson(json['driver']);
     Person commander = Person.fromJson(json['commander']);
     Car vehicle = Car.fromJson(json['car']);
+    RideType type = RideType.fromJson(json['rideType']);
 
     return Ride(
       Id: json['id'] as int?,
@@ -62,6 +68,7 @@ class Ride {
       DriverId: driver.Id,
       CommanderId: commander.Id,
       Date: json['date'] as String,
+      RideTypeId: type.Id,
       RideDescription: json['rideDescription'] as String,
       KilometerStart: json['kilometerStart'] as int,
       KilometerEnd: json['kilometerEnd'] as int,
@@ -77,7 +84,8 @@ class Ride {
 
       Commander: commander,
       Driver: driver,
-      Vehicle: vehicle
+      Vehicle: vehicle,
+      Type: type
     );
   }
 
@@ -88,6 +96,7 @@ class Ride {
       'driverId': DriverId,
       'commanderId': CommanderId,
       'date': Date,
+      'rideTypeId': RideTypeId,
       'rideDescription': RideDescription,
       'kilometerStart': KilometerStart,
       'kilometerEnd': KilometerEnd,

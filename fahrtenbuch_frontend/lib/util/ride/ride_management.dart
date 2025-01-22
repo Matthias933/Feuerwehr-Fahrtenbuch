@@ -1,10 +1,11 @@
-// ignore_for_file: non_constant_identifier_names, prefer_const_constructors
+// ignore_for_file: non_constant_identifier_names, prefer_const_constructors, use_build_context_synchronously
 
 import 'package:fahrtenbuch_frontend/controller/csv_controller.dart';
 import 'package:fahrtenbuch_frontend/controller/ride_controller.dart';
 import 'package:fahrtenbuch_frontend/models/car.dart';
 import 'package:fahrtenbuch_frontend/models/person.dart';
 import 'package:fahrtenbuch_frontend/models/ride.dart';
+import 'package:fahrtenbuch_frontend/models/rideType.dart';
 import 'package:fahrtenbuch_frontend/util/car/car_management.dart';
 import 'package:fahrtenbuch_frontend/util/delete_popup.dart';
 import 'package:fahrtenbuch_frontend/util/person/person_management.dart';
@@ -17,6 +18,7 @@ class RideManagement {
   final CsvController csvController;
   final VoidCallback setStateCallback;
   List<Ride> rides = [];
+  List<RideType> rideTypes = [];
 
   RideManagement({required this.context, required this.setStateCallback})
       : controller = RideController(), csvController = CsvController();
@@ -57,6 +59,7 @@ class RideManagement {
       context: context,
       builder: (BuildContext context) {
         return RideEditPopup(
+          rideTypeItems: rideTypes.map((type) => type.Name).toList(),
           dialogName: 'Fahrt bearbeiten',
           ride: rides[index],
           onSubmit: (
@@ -64,6 +67,7 @@ class RideManagement {
             String driverName,
             String commanderName,
             String date,
+            String rideType,
             String rideDescription,
             int KilometerStart,
             int KilometerEnd,
@@ -83,6 +87,7 @@ class RideManagement {
                 driverName,
                 commanderName,
                 date,
+                rideType,
                 rideDescription,
                 KilometerStart,
                 KilometerEnd,
@@ -107,6 +112,7 @@ class RideManagement {
     String driverName,
     String commanderName,
     String date,
+    String rideType,
     String rideDescription,
     int KilometerStart,
     int KilometerEnd,
@@ -126,14 +132,15 @@ class RideManagement {
     List<String> commanderNames = commanderName.split(' ');
 
 
-    Car car = CarManagement.cars.firstWhere((car) => car.CarNumber == carNumber);
+    Car car = CarManagement.cars.firstWhere((car) => car.CarNumber == carNumber && car.IsActive == true);
     Person driver = PersonManagement.persons.firstWhere((driver) => driver.FirstName == driverNames[0] && driver.LastName == driverNames[1]);
     Person commander = PersonManagement.persons.firstWhere((commander) => commander.FirstName == commanderNames[0] && commander.LastName == commanderNames[1]);
-
+    RideType type = rideTypes.firstWhere((t) => t.Name == rideType);
     Ride updatedRide = Ride(
       Id: currentRide.Id,
       CarId: car.Id,
       DriverId: driver.Id,
+      RideTypeId: type.Id,
       CommanderId: commander.Id,
       Date: date,
       RideDescription: rideDescription,
@@ -178,6 +185,7 @@ class RideManagement {
       context: context,
       builder: (BuildContext context) {
         return RideEditPopup(
+          rideTypeItems: rideTypes.map((type) => type.Name).toList(),
           dialogName: 'Fahrt erstellen',
           ride: null,
            onSubmit: (
@@ -186,6 +194,7 @@ class RideManagement {
             String commanderName,
             String date,
             String rideDescription,
+            String rideType,
             int KilometerStart,
             int KilometerEnd,
             int GasLiter,
@@ -203,6 +212,7 @@ class RideManagement {
                 driverName,
                 commanderName,
                 date,
+                rideType,
                 rideDescription,
                 KilometerStart,
                 KilometerEnd,
@@ -226,6 +236,7 @@ class RideManagement {
     String driverName,
     String commanderName,
     String date,
+    String rideType,
     String rideDescription,
     int KilometerStart,
     int KilometerEnd,
@@ -239,20 +250,19 @@ class RideManagement {
     String Defects,
     String MissingItems,
   ) async {
-    print('i am here');
     List<String> driverNames = driverName.split(' ');
     List<String> commanderNames = commanderName.split(' ');
 
-    print(driverNames[0]);
-    print(driverNames[1]);
     Car car = CarManagement.cars.firstWhere((car) => car.CarNumber == carNumber);
     Person driver = PersonManagement.persons.firstWhere((driver) => driver.FirstName == driverNames[0] && driver.LastName == driverNames[1]);
     Person commander= PersonManagement.persons.firstWhere((commander) => commander.FirstName == commanderNames[0] && commander.LastName == commanderNames[1]);
-    
+    RideType type = rideTypes.firstWhere((t) => t.Name == rideType);
+
      Ride ride = Ride(
       CarId: car.Id,
       DriverId: driver.Id,
       CommanderId: commander.Id,
+      RideTypeId: type.Id,
       Date: date,
       RideDescription: rideDescription,
       KilometerStart: KilometerStart,
@@ -298,6 +308,12 @@ class RideManagement {
     setStateCallback();
   }
 
+  Future<void> fetchRideTypes() async {
+    debugPrint('fetching all rideTypes');
+    rideTypes = await controller.fetchRideTypes();
+    setStateCallback();
+  }
+
   void generateCsv(List<Ride> rides){
     List<List<String>> listOfLists = [];
 
@@ -306,6 +322,7 @@ class RideManagement {
         ride.Date,
         '${ride.Driver!.FirstName} ${ride.Driver!.LastName}',
         '${ride.Commander!.FirstName} ${ride.Commander!.LastName}',
+        ride.Type!.Name,
         ride.RideDescription,
         ride.KilometerStart.toString(),
         ride.KilometerEnd.toString(),

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:fahrtenbuch_frontend/controller/management.dart';
 import 'package:fahrtenbuch_frontend/models/ride.dart';
+import 'package:fahrtenbuch_frontend/models/rideType.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -36,6 +37,36 @@ class RideController {
     }
 
     return rides;
+  }
+
+  Future<List<RideType>> fetchRideTypes() async {
+    List<RideType> rideTypes = [];
+
+    try {
+      final response = await http.get(
+        Uri.parse('${baseUrl}rideTypes'),
+        headers: {
+          'Authorization': 'Bearer ${Management.accessToken}',
+          'Content-Type': 'application/json',
+        },
+      );
+      debugPrint(response.statusCode.toString());
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonData = jsonDecode(response.body);
+        rideTypes = jsonData
+            .map((e) => RideType.fromJson(e as Map<String, dynamic>))
+            .toList();
+        debugPrint('fetched ${rideTypes.length} rideTypes');
+      } else if (response.statusCode == 401) {
+        debugPrint('Error: Unauthorized');
+      } else {
+        debugPrint('ERROR: Could not fetch data.${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+
+    return rideTypes;
   }
 
   Future<int> deleteRide(int id) async {

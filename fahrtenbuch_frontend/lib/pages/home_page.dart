@@ -52,24 +52,21 @@ class _HomePageState extends State<HomePage> {
       await Management.showLoginPage(context);
       debugPrint('login finished');
       setState(() {
-
         appPages.addAll([
-        PersonManagementPage(),
-        CarManagementPage(),
-        RideManagementPage(),
-      ]);
+          PersonManagementPage(),
+          CarManagementPage(),
+          RideManagementPage(),
+        ]);
         //fetch cars
         carManagement.fetchCars();
-      });  
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: appPages.isEmpty
-          ? null
-          : appPages[currentIndex],
+      body: appPages.isEmpty ? null : appPages[currentIndex],
       appBar: AppBar(
         title: Text(appBarNames[currentIndex]),
         centerTitle: true,
@@ -147,12 +144,16 @@ class _HomePageState extends State<HomePage> {
   void showCustomDialog() {
     Management.tokenExpired(context);
 
-    if (currentIndex == 0) {
-      personManagement.createPerson();
-    } else if (currentIndex == 1) {
-      carManagement.createCar();
-    } else if (currentIndex == 2) {
-      rideManagement.createRide();
-    } else {}
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (currentIndex == 0) {
+        personManagement.createPerson();
+      } else if (currentIndex == 1) {
+        carManagement.createCar();
+      } else if (currentIndex == 2) {
+        rideManagement.createRide();
+      } else {}
+      personManagement.fetchPeople();
+    });
+    setState(() {});
   }
 }

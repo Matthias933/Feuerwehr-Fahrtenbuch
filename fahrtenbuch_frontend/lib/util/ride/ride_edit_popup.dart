@@ -1,25 +1,27 @@
 // ignore_for_file: prefer_const_constructors, prefer_typing_uninitialized_variables
 
 import 'package:fahrtenbuch_frontend/models/ride.dart';
-import 'package:fahrtenbuch_frontend/util/auto_complete_input.dart';
+import 'package:fahrtenbuch_frontend/util/inputs/auto_complete_input.dart';
 import 'package:fahrtenbuch_frontend/util/car/car_management.dart';
-import 'package:fahrtenbuch_frontend/util/check_box_input.dart';
-import 'package:fahrtenbuch_frontend/util/datetime_input.dart';
-import 'package:fahrtenbuch_frontend/util/number_input.dart';
+import 'package:fahrtenbuch_frontend/util/inputs/check_box_input.dart';
+import 'package:fahrtenbuch_frontend/util/inputs/datetime_input.dart';
+import 'package:fahrtenbuch_frontend/util/inputs/dropdown_input.dart';
+import 'package:fahrtenbuch_frontend/util/inputs/number_input.dart';
 import 'package:fahrtenbuch_frontend/util/person/person_management.dart';
-import 'package:fahrtenbuch_frontend/util/text_input.dart';
+import 'package:fahrtenbuch_frontend/util/inputs/text_input.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class RideEditPopup extends StatefulWidget {
+  final List<String> rideTypeItems;
   final String dialogName;
   final Ride? ride;
-  final Function(String, String, String, String, String, int, int, int,bool,bool,bool,bool,bool,bool, String, String) onSubmit;
+  final Function(String, String, String, String, String, String, int, int, int,bool,bool,bool,bool,bool,bool, String, String) onSubmit;
 
   const RideEditPopup({
     super.key,
     required this.dialogName,
     required this.onSubmit,
+    required this.rideTypeItems,
     this.ride,
   });
 
@@ -36,6 +38,8 @@ class _RideEditPopupState extends State<RideEditPopup> {
   bool usedCAFS = false;
   bool cafsTankFull = false;
 
+  late String rideType = '';
+
   late TextEditingController dateController;
   late TextEditingController carController;
   late TextEditingController driverController;
@@ -46,7 +50,6 @@ class _RideEditPopupState extends State<RideEditPopup> {
   late TextEditingController gasListerController;
   late TextEditingController defectsController;
   late TextEditingController missingsController;
-
   late CarManagement carManagement;
  
   @override
@@ -63,6 +66,8 @@ class _RideEditPopupState extends State<RideEditPopup> {
       gasListerController = TextEditingController(text: widget.ride!.GasLiter.toString());
       defectsController = TextEditingController(text: widget.ride!.Defects);
       missingsController = TextEditingController(text: widget.ride!.MissingItems);
+
+      rideType = widget.ride!.Type!.Name;
 
       usedPowerGenerator = widget.ride!.UsedPowerGenerator;
       powerGeneratorTankFull = widget.ride!.PowerGeneratorTankFull;
@@ -126,8 +131,10 @@ class _RideEditPopupState extends State<RideEditPopup> {
                     controller: commanderController,
                   ),
                   SizedBox(height: 8),
+                  DropDown(inputValues: widget.rideTypeItems, selectedValue: rideType, onValueChanged: (value) {setState(() {rideType = value ?? 'Unknowm';});}, labelText: 'Fahrt Typ wählen *'),
+                  SizedBox(height: 8),
                   CustomTextInput(
-                    labelText: 'Zweck der Fahrt *',
+                    labelText: 'Zweck der Fahrt',
                     controller: rideDescriptionController,
                   ),
                   SizedBox(height: 16),
@@ -258,6 +265,7 @@ class _RideEditPopupState extends State<RideEditPopup> {
               commanderController.text,
               dateController.text,
               rideDescriptionController.text,
+              rideType,
               int.parse(kilometerStartController.text),
               int.parse(kilometerEndController.text), 
               int.parse(gasListerController.text),

@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, use_build_context_synchronously
 
 import 'package:fahrtenbuch_frontend/controller/car_controller.dart';
 import 'package:fahrtenbuch_frontend/models/car.dart';
@@ -53,18 +53,18 @@ class CarManagement {
         return CarEditPopup(
           dialogName: 'Fahrzeug bearbeiten',
           car: cars[index],
-          onSubmit: (String carNumber) {
-            confirmEdit(index, carNumber);
+          onSubmit: (String carNumber, String manufacturer, String type, int buildyear, bool isActive) {
+            confirmEdit(index, carNumber, manufacturer, type, buildyear, isActive);
           },
         );
       },
     );
   }
 
-  void confirmEdit(int index, String carNumber) async {
+  void confirmEdit(int index, String carNumber, String manufacturer, String type, int buildyear, bool isActive) async {
     Car currentCar = cars[index];
 
-    Car updatedCar = Car(Id: currentCar.Id, CarNumber: carNumber);
+    Car updatedCar = Car(Id: currentCar.Id, CarNumber: carNumber, Manufacturer: manufacturer, Type: type, Buildyear: buildyear, IsActive: isActive);
 
     int ret = await controller.editCar(updatedCar);
 
@@ -96,16 +96,16 @@ class CarManagement {
         return CarEditPopup(
           dialogName: 'Fahrzeug erstellen',
           car: null,
-          onSubmit: (String carNumber) {
-            confirmCreate(carNumber);
+          onSubmit: (String carNumber, String manufacturer, String type, int buildyear, bool isActive) {
+            confirmCreate(carNumber, manufacturer, type, buildyear, isActive);
           },
         );
       },
     );
   }
 
-  void confirmCreate(String carNumber) async {
-    Car car = Car(CarNumber: carNumber);
+  void confirmCreate(String carNumber, String manufacturer, String type, int buildyear, bool isActive) async {
+    Car car = Car(CarNumber: carNumber, Manufacturer: manufacturer, Type: type, Buildyear: buildyear, IsActive: isActive);
 
     int ret = await controller.createCar(car);
 
@@ -139,7 +139,6 @@ class CarManagement {
   void displaySnackbar(String text, Icon icon, Color color) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       backgroundColor: color,
-      //behavior: SnackBarBehavior.floating,
       duration: Duration(seconds: 5),
       showCloseIcon: true,
       content: Row(

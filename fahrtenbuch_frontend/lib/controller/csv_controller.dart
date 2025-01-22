@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+// ignore: library_prefixes
 import 'package:to_csv/to_csv.dart' as exportCSV;
 
 class CsvController {
@@ -7,6 +8,7 @@ class CsvController {
     'Datum',
     'Maschinist',
     'Kommandant',
+    'Typ',
     'Beschreibung',
     'Kilometer Start',
     'Kilometer Ende',
@@ -21,6 +23,7 @@ class CsvController {
     'Fehlendes'
   ];
 
+  // ignore: non_constant_identifier_names
   void DownloadCSV(List<List<String>> input){
     exportCSV.myCSV(header, input, setHeadersInFirstRow: true, fileName: 'Fahrtenbuch', fieldDelimiter: ';', encodingType: latin1);
   }

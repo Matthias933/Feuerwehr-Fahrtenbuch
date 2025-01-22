@@ -14,29 +14,31 @@ class Ride {
   @HiveField(3)
   final String Date;
   @HiveField(4)
-  final String RideDescription;
+  final int RideTypeId;
   @HiveField(5)
-  final int KilometerStart;
+  final String RideDescription;
   @HiveField(6)
-  final int KilometerEnd;
+  final int KilometerStart;
   @HiveField(7)
+  final int KilometerEnd;
+  @HiveField(8)
   final int GasLiter;
 
-  @HiveField(8)
-  final bool UsedPowerGenerator;
   @HiveField(9)
-  final bool PowerGeneratorTankFull;
+  final bool UsedPowerGenerator;
   @HiveField(10)
-  final bool UsedRespiratoryProtection;
+  final bool PowerGeneratorTankFull;
   @HiveField(11)
-  final bool RespiratoryProtectionUpgraded;
+  final bool UsedRespiratoryProtection;
   @HiveField(12)
-  final bool UsedCAFS;
+  final bool RespiratoryProtectionUpgraded;
   @HiveField(13)
-  final bool CAFSTankFull;
+  final bool UsedCAFS;
   @HiveField(14)
-  final String Defects;
+  final bool CAFSTankFull;
   @HiveField(15)
+  final String Defects;
+  @HiveField(16)
   final String MissingItems;
   
   Ride({
@@ -44,6 +46,7 @@ class Ride {
     required this.DriverId,
     required this.CommanderId,
     required this.Date,
+    required this.RideTypeId,
     required this.RideDescription,
     required this.KilometerStart,
     required this.KilometerEnd,
@@ -55,29 +58,8 @@ class Ride {
     this.UsedCAFS = false,
     this.CAFSTankFull = false,
     this.Defects = '',
-    this.MissingItems = ''
+    this.MissingItems = '',
   });
-
-factory Ride.fromJson(Map<String, dynamic> json) {
-  return Ride(
-    CarId: json['carId'] as int,
-    DriverId: json['driverId'] as int,
-    CommanderId: json['commanderId'] as int,
-    Date: json['date'] as String,
-    RideDescription: json['rideDescription'] as String,
-    KilometerStart: json['kilometerStart'] as int,
-    KilometerEnd: json['kilometerEnd'] as int,
-    GasLiter: json['gasLiter'] as int? ?? 0,
-    UsedPowerGenerator: json['usedPowerGenerator'] as bool? ?? false,
-    PowerGeneratorTankFull: json['powerGeneratorTankFull'] as bool? ?? false,
-    UsedRespiratoryProtection: json['usedRespiratoryProtection'] as bool? ?? false,
-    RespiratoryProtectionUpgraded: json['respiratoryProtectionUpgraded'] as bool? ?? false,
-    UsedCAFS: json['usedCAFS'] as bool? ?? false,
-    CAFSTankFull: json['cafstankFull'] as bool? ?? false,
-    Defects: json['defects'] as String? ?? '',
-    MissingItems: json['missingItems'] as String? ?? '',
-  );
-}
 
 Map<String, dynamic> toJson() {
   return {
@@ -85,6 +67,7 @@ Map<String, dynamic> toJson() {
     'driverId': DriverId,
     'commanderId': CommanderId,
     'date': Date,
+    'rideTypeId': RideTypeId,
     'rideDescription': RideDescription,
     'kilometerStart': KilometerStart,
     'kilometerEnd': KilometerEnd,

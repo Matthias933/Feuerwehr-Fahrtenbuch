@@ -6,9 +6,11 @@ import 'package:fahrtenbuch_v1/database/context.dart';
 import 'package:fahrtenbuch_v1/pages/home_page.dart';
 import 'package:fahrtenbuch_v1/utilities/check_box_input.dart';
 import 'package:fahrtenbuch_v1/utilities/datetime_input.dart';
+import 'package:fahrtenbuch_v1/utilities/drop_down_input.dart';
 import 'package:fahrtenbuch_v1/utilities/number_input.dart';
 import 'package:fahrtenbuch_v1/utilities/text_input.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../utilities/auto_complete_input.dart';
 
@@ -29,6 +31,7 @@ class _CreateRidePageState extends State<CreateRidePage> {
   TextEditingController gasListerController = TextEditingController();
   TextEditingController defectsController = TextEditingController();
   TextEditingController missingsController = TextEditingController();
+  String rideType = '';
   bool usedPowerGenerator = false;
   bool powerGeneratorTankFull = false;
   bool usedRespiratoryProtection = false;
@@ -40,12 +43,21 @@ class _CreateRidePageState extends State<CreateRidePage> {
   @override
   void initState() {
     super.initState();
+
+    //format date correctly
+    DateFormat dateFormat = DateFormat("yyyy-MM-dd");
+    dateController.text = dateFormat.format(DateTime.now());
     String previousCarName = dbContext.getPreviousCarName();
+    int previousKilometer = dbContext.getPreviousKilometeR();
     if(previousCarName.isNotEmpty){
-      setState(() {
         carController.text = previousCarName;
-      });
     }
+    if(previousKilometer != 0){
+        kilometerStartController.text = previousKilometer.toString();
+    }
+
+    //updated the ui after all changed are applied
+    setState(() {});
   }
 
   @override
@@ -61,10 +73,15 @@ class _CreateRidePageState extends State<CreateRidePage> {
       return '${car.CarNumber}';
     }).toList();
 
+    List<String> rideTypes = dbContext.getRideTypes().map((rideType){
+      return '${rideType.Name}';
+    }).toList();
+
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
           elevation: 10,
+          backgroundColor: Colors.blueGrey,
           title: Text('Fahrtenbuch',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25)),
           centerTitle: true,
@@ -117,8 +134,10 @@ class _CreateRidePageState extends State<CreateRidePage> {
                             controller: commanderController,
                           ),
                           SizedBox(height: 8),
+                          DropDown(inputValues: rideTypes, onValueChanged: (value) {setState(() {rideType = value ?? 'Unknown';});}, labelText: 'Fahrt Typ wählen *'),
+                          SizedBox(height: 8),
                           CustomTextInput(
-                            labelText: 'Zweck der Fahrt *',
+                            labelText: 'Zweck der Fahrt ',
                             controller: rideDescriptionController,
                           ),
                           SizedBox(height: 16),
@@ -311,7 +330,8 @@ class _CreateRidePageState extends State<CreateRidePage> {
         kilometerStartController.text.isNotEmpty &&
         kilometerEndController.text.isNotEmpty &&
         driverController.text.isNotEmpty &&
-        commanderController.text.isNotEmpty) {
+        commanderController.text.isNotEmpty &&
+        rideType.isNotEmpty) {
       //requierd fields are filled out 
       Ride ride = assignRide();
 
@@ -329,18 +349,20 @@ class _CreateRidePageState extends State<CreateRidePage> {
   void saveOnServer(Ride ride) async {
     ApiController apiController = ApiController();
     int ret = await apiController.createRide(ride);
+    dbContext.setPreviousCarName(carController.text);
+    dbContext.setPreviousKilometer(int.parse(kilometerEndController.text));
     if (ret < 0) {
       saveOnDevice(ride);
     } else {
-      dbContext.setPreviousCarName(carController.text);
       displaySnackbar(
           'Fahrt wurde erfolgreich gespeichert',
           Icon(
             Icons.info,
             color: Colors.white,
           ), Colors.green);
-      navigateBack();
     }
+    dbContext.setPreviousRide(ride);
+    navigateBack();
   }
 
   void saveOnDevice(Ride ride) {
@@ -364,11 +386,13 @@ class _CreateRidePageState extends State<CreateRidePage> {
     int driverId = dbContext.getIdByName(driverController.text);
     int commanderId = dbContext.getIdByName(commanderController.text);
     int carId = dbContext.getCarIdByName(carController.text);
+    int rideTypeId = dbContext.getRideTypeIdByName(rideType);
     return Ride(
       CarId: carId,
       DriverId: driverId,
       CommanderId: commanderId,
       Date: dateController.text,
+      RideTypeId: rideTypeId,
       RideDescription: rideDescriptionController.text,
       KilometerStart: int.parse(kilometerStartController.text),
       KilometerEnd: int.parse(kilometerEndController.text),
