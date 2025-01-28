@@ -11,10 +11,14 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class ApiController {
-  final String baseUrl = 'http://localhost:3000/';
+  final String baseUrl;
   DBContext context = DBContext();
 
   static bool isConnected = false;
+
+  ApiController({String? baseUrl}) 
+    : baseUrl = baseUrl ?? 'http://${DBContext().getServerAddress()}:${DBContext().getServerPort()}/';
+
 
   Future<void> checkServerConnection() async {
     final url = Uri.parse('${baseUrl}checkConnection');

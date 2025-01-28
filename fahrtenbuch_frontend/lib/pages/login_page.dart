@@ -6,29 +6,39 @@ class LoginPage extends StatelessWidget {
   final TextEditingController nameController;
   final TextEditingController passwordController;
   final Function onSubmit;
-  const LoginPage({super.key, required this.nameController, required this.passwordController, required this.onSubmit});
+
+  const LoginPage({
+    super.key,
+    required this.nameController,
+    required this.passwordController,
+    required this.onSubmit,
+  });
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Login'),
+      title: const Text('Login'),
       content: Wrap(
-        children:[ Column(
-          children: [
-            CustomTextInput(labelText: 'Benutzername', controller: nameController),
-            SizedBox(height: 10,),
-            CustomPasswordInput(labelText: 'Password', controller: passwordController)
-          ],
-        ),
-      ]),
-     actions: [
+        children: [
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CustomTextInput(labelText: 'Benutzername', controller: nameController),
+              const SizedBox(height: 10),
+              CustomPasswordInput(labelText: 'Password', controller: passwordController),
+            ],
+          ),
+        ],
+      ),
+      actions: [
         TextButton(
           onPressed: () {
             onSubmit();
           },
-          child: Text('Anmelden', style: TextStyle(color: Colors.green)),
+          child: const Text('Anmelden', style: TextStyle(color: Colors.green)),
         ),
       ],
     );
   }
+
 }

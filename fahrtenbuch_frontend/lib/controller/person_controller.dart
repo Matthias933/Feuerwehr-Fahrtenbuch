@@ -6,14 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class PersonController {
-  final String baseUrl = 'http://localhost:3000/';
-
   Future<List<Person>> fetchPeople() async {
     List<Person> persons = [];
 
     try {
       final response = await http.get(
-        Uri.parse('${baseUrl}people'),
+        Uri.parse('${Management.baseUrl}people'),
         headers: {
           'Authorization': 'Bearer ${Management.accessToken}',
           'Content-Type': 'application/json',
@@ -40,7 +38,7 @@ class PersonController {
   Future<int> deletePerson(int id) async {
     try {
       final response = await http.delete(
-        Uri.parse('${baseUrl}people/$id'),
+        Uri.parse('${Management.baseUrl}people/$id'),
         headers: {
           'Authorization': 'Bearer ${Management.accessToken}',
           'Content-Type': 'application/json',
@@ -65,7 +63,7 @@ class PersonController {
     String jsonBody = jsonEncode(person.toJson());
 
     final response = await http.put(
-      Uri.parse('${baseUrl}people'),
+      Uri.parse('${Management.baseUrl}people'),
       headers: {
         'Authorization': 'Bearer ${Management.accessToken}',
         'Content-Type': 'application/json',
@@ -91,7 +89,7 @@ Future<int> createPerson(Person person) async{
     String jsonBody = jsonEncode(person.toJson());
 
     final response = await http.post(
-      Uri.parse('${baseUrl}people'),
+      Uri.parse('${Management.baseUrl}people'),
       headers: {
         'Authorization': 'Bearer ${Management.accessToken}',
         'Content-Type': 'application/json',

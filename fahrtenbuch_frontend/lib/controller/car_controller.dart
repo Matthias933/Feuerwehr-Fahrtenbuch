@@ -6,14 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class CarController {
-  final String baseUrl = 'http://localhost:3000/';
-
   Future<List<Car>> fetchCars() async {
     List<Car> cars = [];
 
     try {
       final response = await http.get(
-        Uri.parse('${baseUrl}car'),
+        Uri.parse('${Management.baseUrl}car'),
         headers: {
           'Authorization': 'Bearer ${Management.accessToken}',
           'Content-Type': 'application/json',
@@ -41,7 +39,7 @@ class CarController {
   Future<int> deleteCar(int id) async {
     try {
       final response = await http.delete(
-        Uri.parse('${baseUrl}car/$id'),
+        Uri.parse('${Management.baseUrl}car/$id'),
         headers: {
           'Authorization': 'Bearer ${Management.accessToken}',
           'Content-Type': 'application/json',
@@ -66,7 +64,7 @@ class CarController {
       String jsonBody = jsonEncode(car.toJson());
 
       final response = await http.put(
-        Uri.parse('${baseUrl}car'),
+        Uri.parse('${Management.baseUrl}car'),
         headers: {
           'Authorization': 'Bearer ${Management.accessToken}',
           'Content-Type': 'application/json',
@@ -93,7 +91,7 @@ class CarController {
       String jsonBody = jsonEncode(car.toJson());
 
       final response = await http.post(
-        Uri.parse('${baseUrl}car'),
+        Uri.parse('${Management.baseUrl}car'),
         headers: {
           'Authorization': 'Bearer ${Management.accessToken}',
           'Content-Type': 'application/json',

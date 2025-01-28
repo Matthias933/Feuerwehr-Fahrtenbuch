@@ -132,9 +132,9 @@ class RideManagement {
     List<String> commanderNames = commanderName.split(' ');
 
 
-    Car car = CarManagement.cars.firstWhere((car) => car.CarNumber == carNumber && car.IsActive == true);
-    Person driver = PersonManagement.persons.firstWhere((driver) => driver.FirstName == driverNames[0] && driver.LastName == driverNames[1]);
-    Person commander = PersonManagement.persons.firstWhere((commander) => commander.FirstName == commanderNames[0] && commander.LastName == commanderNames[1]);
+    Car car = CarManagement.cars.value.firstWhere((car) => car.CarNumber == carNumber && car.IsActive == true);
+    Person driver = PersonManagement.persons.value.firstWhere((driver) => driver.FirstName == driverNames[0] && driver.LastName == driverNames[1]);
+    Person commander = PersonManagement.persons.value.firstWhere((commander) => commander.FirstName == commanderNames[0] && commander.LastName == commanderNames[1]);
     RideType type = rideTypes.firstWhere((t) => t.Name == rideType);
     Ride updatedRide = Ride(
       Id: currentRide.Id,
@@ -253,9 +253,9 @@ class RideManagement {
     List<String> driverNames = driverName.split(' ');
     List<String> commanderNames = commanderName.split(' ');
 
-    Car car = CarManagement.cars.firstWhere((car) => car.CarNumber == carNumber);
-    Person driver = PersonManagement.persons.firstWhere((driver) => driver.FirstName == driverNames[0] && driver.LastName == driverNames[1]);
-    Person commander= PersonManagement.persons.firstWhere((commander) => commander.FirstName == commanderNames[0] && commander.LastName == commanderNames[1]);
+    Car car = CarManagement.cars.value.firstWhere((car) => car.CarNumber == carNumber);
+    Person driver = PersonManagement.persons.value.firstWhere((driver) => driver.FirstName == driverNames[0] && driver.LastName == driverNames[1]);
+    Person commander= PersonManagement.persons.value.firstWhere((commander) => commander.FirstName == commanderNames[0] && commander.LastName == commanderNames[1]);
     RideType type = rideTypes.firstWhere((t) => t.Name == rideType);
 
      Ride ride = Ride(

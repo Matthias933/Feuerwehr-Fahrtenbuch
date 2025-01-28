@@ -10,7 +10,7 @@ class CarManagement {
   final BuildContext context;
   final CarController controller;
   final VoidCallback setStateCallback;
-  static List<Car> cars = [];
+  static ValueNotifier<List<Car>> cars = ValueNotifier([]);
 
   CarManagement({required this.context, required this.setStateCallback})
       : controller = CarController();
@@ -29,7 +29,7 @@ class CarManagement {
   }
 
   void confirmDelte(int index) async {
-    int ret = await controller.deleteCar(cars[index].Id!);
+    int ret = await controller.deleteCar(cars.value[index].Id!);
     Navigator.of(context).pop();
     if (ret == 0) {
       fetchCars();
@@ -52,7 +52,7 @@ class CarManagement {
       builder: (BuildContext context) {
         return CarEditPopup(
           dialogName: 'Fahrzeug bearbeiten',
-          car: cars[index],
+          car: cars.value[index],
           onSubmit: (String carNumber, String manufacturer, String type, int buildyear, bool isActive) {
             confirmEdit(index, carNumber, manufacturer, type, buildyear, isActive);
           },
@@ -62,7 +62,7 @@ class CarManagement {
   }
 
   void confirmEdit(int index, String carNumber, String manufacturer, String type, int buildyear, bool isActive) async {
-    Car currentCar = cars[index];
+    Car currentCar = cars.value[index];
 
     Car updatedCar = Car(Id: currentCar.Id, CarNumber: carNumber, Manufacturer: manufacturer, Type: type, Buildyear: buildyear, IsActive: isActive);
 
@@ -132,7 +132,7 @@ class CarManagement {
 
   void fetchCars() async {
     debugPrint('fetching all cars');
-    cars = await controller.fetchCars();
+    cars.value = await controller.fetchCars();
     setStateCallback();
   }
 

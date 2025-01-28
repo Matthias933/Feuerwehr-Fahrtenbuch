@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, use_build_context_synchronously
 
 import 'package:fahrtenbuch_frontend/pages/login_page.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +7,9 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 
 class Management {
   static String accessToken = '';
+  static String baseUrl = '';
+  static String serverName = '';
+  static String serverPort = '';
   final VoidCallback setStateCallback;
 
   Management({required this.setStateCallback});
@@ -20,7 +23,7 @@ class Management {
   static Future<void> showLoginPage(BuildContext context) async {
     TextEditingController nameController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
-
+        
     await showDialog(
         context: context,
         barrierDismissible: false,
@@ -31,7 +34,7 @@ class Management {
             onSubmit: () async {
               debugPrint('signing in');
               try {
-                final uri = Uri.http('localhost:3000', 'signIn', {
+                final uri = Uri.http('$serverName:$serverPort', 'signIn', {
                   'name': nameController.text,
                   'password': passwordController.text,
                 });

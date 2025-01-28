@@ -17,22 +17,35 @@ class _CarManagementPageState extends State<CarManagementPage> {
   @override
   void initState() {
     super.initState();
+
+    CarManagement.cars.addListener(() => refreshCars());
+
     carManagement = CarManagement(context: context, setStateCallback: () {setState(() {});});
     carManagement.fetchCars();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    CarManagement.cars.removeListener(() => refreshCars());
+  }
+
+  void refreshCars(){
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      child: CarManagement.cars.isEmpty
+      child: CarManagement.cars.value.isEmpty
           ? Center(child: CircularProgressIndicator())
           : ListView.builder(
-              itemCount: CarManagement.cars.length,
+              itemCount: CarManagement.cars.value.length,
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(
                   title: Text(
-                    CarManagement.cars[index].CarNumber,
+                    CarManagement.cars.value[index].CarNumber,
                     style: TextStyle(color: Colors.black),
                   ),
                   trailing: SizedBox(

@@ -11,10 +11,9 @@ class PersonManagement {
   final BuildContext context;
   final PersonController controller;
   final VoidCallback setStateCallback;
-  static List<Person> persons = [];
+  static ValueNotifier<List<Person>> persons = ValueNotifier([]);
 
   PersonManagement({required this.context, required this.setStateCallback})  : controller = PersonController();
-
     void deletePerson(int index){
     showDialog(context: context, barrierDismissible: false, builder: (BuildContext context){
       return DeletePopup(title: 'Person', description: 'Wenn Sie diese Person löschen werden alle anhängenden Fahrten der Person mit gelöscht!',  onDelete: () => confirmDelte(index),);
@@ -22,7 +21,7 @@ class PersonManagement {
   }
 
   void confirmDelte(int index) async{
-    int ret = await controller.deletePerson(persons[index].Id!);
+    int ret = await controller.deletePerson(persons.value[index].Id!);
     Navigator.of(context).pop();
     if(ret == 0){
       fetchPeople();
@@ -40,7 +39,7 @@ class PersonManagement {
     builder: (BuildContext context) {
       return PersonEditPopup(
         dialogName: 'Person bearbeiten',
-        person: persons[index],
+        person: persons.value[index],
         onSubmit: (String firstName, String lastName, bool isActive, bool isDriver, bool isCommander) {
           confirmEdit(index, firstName, lastName, isActive, isDriver, isCommander);
         },
@@ -51,7 +50,7 @@ class PersonManagement {
 
 
  void confirmEdit(int index, String firstName, String lastName, bool isActive, bool isDriver, bool isCommander) async {
-  Person currentPerson = persons[index];
+  Person currentPerson = persons.value[index];
 
   List<Role> updatedRoles = List.from(currentPerson.Roles); 
 
@@ -147,7 +146,7 @@ class PersonManagement {
 
   Future<void> fetchPeople() async {
     debugPrint('fetching all people');
-    persons = await controller.fetchPeople();
+    persons.value = await controller.fetchPeople();
     setStateCallback();
   }
 

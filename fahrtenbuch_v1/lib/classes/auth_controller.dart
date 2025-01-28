@@ -5,8 +5,12 @@ import 'package:http/http.dart' as http;
 
 
 class AuthController {
-   final String baseUrl = 'localhost:3000';
-   DBContext context = DBContext();
+  final String baseUrl;
+  DBContext context = DBContext();
+
+  AuthController({String? baseUrl}) 
+    : baseUrl = baseUrl ?? '${DBContext().getServerAddress()}:${DBContext().getServerPort()}';
+
 
    Future<void> signIn() async{
     if(!ApiController.isConnected){

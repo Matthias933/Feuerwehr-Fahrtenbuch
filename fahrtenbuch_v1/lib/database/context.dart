@@ -1,3 +1,5 @@
+import 'dart:core';
+
 import 'package:fahrtenbuch_v1/entities/ride.dart';
 import 'package:hive/hive.dart';
 
@@ -26,6 +28,8 @@ class DBContext {
   String previousCarName = '';
   int previousKilometer = 0;
   Ride? previousRide;
+  String serverAddress = '';
+  int serverPort = 0;
   List personList = [];
   List rideList = [];
   List carList = [];
@@ -39,7 +43,25 @@ class DBContext {
   final kilometerBox = Hive.box('kilometerBox');
   final rideTypeBox = Hive.box('rideTypeBox');
   final previousRideBox = Hive.box('previousRideBox');
+  final serverInfoBox = Hive.box('serverBox');
   
+  
+  void setServerInfo(String address, int port){
+    serverAddress = address;
+    serverPort = port;
+
+    serverInfoBox.put('address', address);
+    serverInfoBox.put('port', port);
+  }
+
+  String getServerAddress(){
+    return serverInfoBox.get('address') ?? '';
+  }
+
+  int getServerPort(){
+    return serverInfoBox.get('port') ?? 0;
+  }
+
 
   void setToken(String token) {
     accessToken = token;

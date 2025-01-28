@@ -7,14 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class RideController {
-  final String baseUrl = 'http://localhost:3000/';
-
   Future<List<Ride>> fetchRides() async {
     List<Ride> rides = [];
 
     try {
       final response = await http.get(
-        Uri.parse('${baseUrl}ride'),
+        Uri.parse('${Management.baseUrl}ride'),
         headers: {
           'Authorization': 'Bearer ${Management.accessToken}',
           'Content-Type': 'application/json',
@@ -44,7 +42,7 @@ class RideController {
 
     try {
       final response = await http.get(
-        Uri.parse('${baseUrl}rideTypes'),
+        Uri.parse('${Management.baseUrl}rideTypes'),
         headers: {
           'Authorization': 'Bearer ${Management.accessToken}',
           'Content-Type': 'application/json',
@@ -72,7 +70,7 @@ class RideController {
   Future<int> deleteRide(int id) async {
     try {
       final response = await http.delete(
-        Uri.parse('${baseUrl}ride/$id'),
+        Uri.parse('${Management.baseUrl}ride/$id'),
         headers: {
           'Authorization': 'Bearer ${Management.accessToken}',
           'Content-Type': 'application/json',
@@ -97,7 +95,7 @@ class RideController {
       String jsonBody = jsonEncode(ride.toJson());
 
       final response = await http.put(
-        Uri.parse('${baseUrl}ride'),
+        Uri.parse('${Management.baseUrl}ride'),
         headers: {
           'Authorization': 'Bearer ${Management.accessToken}',
           'Content-Type': 'application/json',
@@ -123,7 +121,7 @@ class RideController {
       String jsonBody = jsonEncode(ride.toJson());
 
       final response = await http.post(
-        Uri.parse('${baseUrl}ride'),
+        Uri.parse('${Management.baseUrl}ride'),
         headers: {
           'Authorization': 'Bearer ${Management.accessToken}',
           'Content-Type': 'application/json',

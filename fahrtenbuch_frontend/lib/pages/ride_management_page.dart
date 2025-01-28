@@ -20,7 +20,7 @@ class _RideManagementPageState extends State<RideManagementPage> {
   TextEditingController endController = TextEditingController();
 
   late RideManagement rideManagement;
-  late List<Ride> rides = [];
+  late ValueNotifier<List<Ride>> rides = ValueNotifier([]);
   late List<Ride> filteredRides = [];
   String? selectedCar;
   String? selectedType;
@@ -28,6 +28,8 @@ class _RideManagementPageState extends State<RideManagementPage> {
   @override
   void initState() {
     super.initState();
+
+    rides.addListener(() => refreshRides());
 
     rideManagement = RideManagement(
       context: context,
@@ -44,13 +46,23 @@ class _RideManagementPageState extends State<RideManagementPage> {
     // Fetch rides
     rideManagement.fetchRides().then((_) {
       setState(() {
-        rides = rideManagement.rides;
-        filteredRides = List.from(rides);
+        rides.value = rideManagement.rides;
+        filteredRides = List.from(rides.value);
       });
     });
 
     startController.addListener(() => filterRides());
     endController.addListener(() => filterRides());
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    rides.removeListener(() => refreshRides());
+  }
+
+  void refreshRides(){
+    setState(() {});
   }
 
   @override
@@ -85,7 +97,7 @@ class _RideManagementPageState extends State<RideManagementPage> {
                   child: DropDown(
                     labelText: 'Fahrzeug wählen',
                     inputValues:
-                        CarManagement.cars.map((car) => car.CarNumber).toList(),
+                        CarManagement.cars.value.map((car) => car.CarNumber).toList(),
                     onValueChanged: (selectedItem) {
                       selectedCar = selectedItem;
                       filterRides();
@@ -192,7 +204,7 @@ class _RideManagementPageState extends State<RideManagementPage> {
 
   void resetFilters() {
     setState(() {
-      filteredRides = List.from(rides);
+      filteredRides = List.from(rides.value);
       startController.clear();
       endController.clear();
       selectedCar = null;

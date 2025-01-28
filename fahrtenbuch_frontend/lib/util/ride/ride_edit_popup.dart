@@ -68,7 +68,6 @@ class _RideEditPopupState extends State<RideEditPopup> {
       missingsController = TextEditingController(text: widget.ride!.MissingItems);
 
       rideType = widget.ride!.Type!.Name;
-
       usedPowerGenerator = widget.ride!.UsedPowerGenerator;
       powerGeneratorTankFull = widget.ride!.PowerGeneratorTankFull;
       usedRespiratoryProtection = widget.ride!.UsedRespiratoryProtection;
@@ -92,7 +91,7 @@ class _RideEditPopupState extends State<RideEditPopup> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint(PersonManagement.persons.where((driver) => driver.Roles.any((role) => role.Name == 'Maschinist')).map((person) => '${person.FirstName} ${person.LastName}').toList().length.toString());
+    debugPrint(PersonManagement.persons.value.where((driver) => driver.Roles.any((role) => role.Name == 'Maschinist')).map((person) => '${person.FirstName} ${person.LastName}').toList().length.toString());
     return AlertDialog(
       title: Text(widget.dialogName),
       content: SingleChildScrollView(
@@ -114,19 +113,19 @@ class _RideEditPopupState extends State<RideEditPopup> {
                   ),
                   SizedBox(height: 8),
                   AutoCompleteInput(
-                    names: CarManagement.cars.map((car) => car.CarNumber).toList(), 
+                    names: CarManagement.cars.value.map((car) => car.CarNumber).toList(), 
                     labelText: 'Fahrzeug *',
                     controller: carController,
                   ),
                   SizedBox(height: 8),
                   AutoCompleteInput(
-                    names: PersonManagement.persons.where((driver) => driver.Roles.any((role) => role.Name == 'Maschinist')).map((person) => '${person.FirstName} ${person.LastName}').toList(), 
+                    names: PersonManagement.persons.value.where((driver) => driver.Roles.any((role) => role.Name == 'Maschinist')).map((person) => '${person.FirstName} ${person.LastName}').toList(), 
                     labelText: 'Fahrer *',
                     controller: driverController,
                   ),
                   SizedBox(height: 8),
                   AutoCompleteInput(
-                    names: PersonManagement.persons.where((commander) => commander.Roles.any((role) => role.Name == 'Kommandant')).map((person) => '${person.FirstName} ${person.LastName}').toList(),
+                    names: PersonManagement.persons.value.where((commander) => commander.Roles.any((role) => role.Name == 'Kommandant')).map((person) => '${person.FirstName} ${person.LastName}').toList(),
                     labelText: 'Kommandant *',
                     controller: commanderController,
                   ),

@@ -30,6 +30,7 @@ void main() async {
   var carNameBox = await Hive.openBox('carNameBox');
   var kilometerBox = await Hive.openBox('kilometerBox');
   var previousRideBox = await Hive.openBox('previousRideBox');
+  var serverInfoBox = await Hive.openBox('serverBox');
 
   //Get people from server
   ApiController apiController = ApiController();

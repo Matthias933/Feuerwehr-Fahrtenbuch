@@ -1,5 +1,6 @@
 import 'package:fahrtenbuch_v1/database/context.dart';
 import 'package:fahrtenbuch_v1/pages/create_ride_page.dart';
+import 'package:fahrtenbuch_v1/pages/settings_page.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
@@ -20,6 +21,9 @@ class HomePage extends StatelessWidget {
         ),
         centerTitle: true,
         backgroundColor: Colors.blueGrey,
+        actions: [
+          IconButton(onPressed: () => openSettings(context), icon: const Icon(Icons.settings, color: Colors.white,))
+        ],
       ),
       body: Center(
         child: SizedBox(
@@ -130,6 +134,15 @@ class HomePage extends StatelessWidget {
         ),
         icon: const Icon(Icons.add, color: Colors.white, size: 25),
       ),
+    );
+  }
+
+  void openSettings(BuildContext context){
+     showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const SettingsPage();
+      },
     );
   }
 }
