@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Role } from './role';
 import { Ride } from './ride';
+import { Car } from './car';
 
 @Entity()
 export class Person {
@@ -27,4 +28,7 @@ export class Person {
   @JoinTable()
   roles: Role[];
 
+  @ManyToMany(() => Car)
+  @JoinTable()
+  driveableCars: Car[];
 }

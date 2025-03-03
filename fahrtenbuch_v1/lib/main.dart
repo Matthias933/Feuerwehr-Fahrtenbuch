@@ -22,17 +22,26 @@ void main() async {
   Hive.registerAdapter(CarAdapter());
   Hive.registerAdapter(RideTypeAdapter());
 
-  var personBox = await Hive.openBox('personBox');
-  var rideBox = await Hive.openBox('rideBox');
-  var rideTypeBox = await Hive.openBox('rideTypeBox');
-  var carBox = await Hive.openBox('carBox');
-  var tokenBox = await Hive.openBox('tokenBox');
-  var carNameBox = await Hive.openBox('carNameBox');
-  var kilometerBox = await Hive.openBox('kilometerBox');
-  var previousRideBox = await Hive.openBox('previousRideBox');
-  var serverInfoBox = await Hive.openBox('serverBox');
+  // Open all boxes
+  var boxes = [
+    'personBox',
+    'rideBox',
+    'rideTypeBox',
+    'carBox',
+    'tokenBox',
+    'carNameBox',
+    'kilometerBox',
+    'previousRideBox',
+    'serverBox'
+  ];
 
-  //Get people from server
+  for (var boxName in boxes) {
+    var box = await Hive.openBox(boxName);
+    //await box.clear(); // Clears all data
+    //await box.deleteFromDisk(); // Uncomment to completely remove the box
+  }
+
+  // Initialize necessary services
   ApiController apiController = ApiController();
   AuthController authController = AuthController();
   DBContext dbContext = DBContext();
@@ -43,8 +52,9 @@ void main() async {
   await apiController.fetchCars();
   await apiController.fetchRideTypes();
 
-  final List<dynamic> rides = List.from(dbContext.rideList); //creates a copy of the actual list
-  if(rides.isNotEmpty){
+  // Sync rides if there are any
+  final List<dynamic> rides = List.from(dbContext.rideList);
+  if (rides.isNotEmpty) {
     for (var ride in rides) {
       await apiController.createRide(ride);
     }

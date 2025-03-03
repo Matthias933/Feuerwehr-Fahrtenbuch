@@ -1,5 +1,6 @@
 // ignore_for_file: constant_identifier_names, unused_local_variable, non_constant_identifier_names
 
+import 'package:fahrtenbuch_v1/entities/car.dart';
 import 'package:hive/hive.dart';
 import 'role.dart';
 
@@ -22,12 +23,17 @@ class Person {
   @HiveField(4)
   final List<Role> Roles;
 
+  @HiveField(5)
+  final List<Car> DriveableCars;
+
+
   Person({
     required this.Id,
     required this.FirstName,
     required this.LastName,
     required this.IsActive,
     required this.Roles,
+    required this.DriveableCars
   });
 
    factory Person.fromJson(Map<String, dynamic> json) {
@@ -45,6 +51,9 @@ class Person {
           IsActive: json['isActive'] as bool,
           Roles: (json['roles'] as List<dynamic>)
           .map((roleJson) => Role.fromJson(roleJson as Map<String, dynamic>))
+          .toList(),
+          DriveableCars: (json['driveableCars'] as List<dynamic>)
+          .map((carJson) => Car.fromJson(carJson as Map<String, dynamic>))
           .toList(),
         ),
       _ => throw const FormatException('Failed to load person.'),

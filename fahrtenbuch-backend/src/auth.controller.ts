@@ -11,7 +11,6 @@ export class AuthController {
 
   @Get('signIn')
   async signIn(@Query('name') name: string, @Query('password') password: string): Promise<string> {
-    console.log(name + password);
     return this.authService.signIn(name, password);
   }
 

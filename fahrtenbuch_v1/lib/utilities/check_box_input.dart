@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 class CustomCheckBoxInput extends StatefulWidget {
   final String description;
   final bool value;
-  final ValueChanged<bool> onChanged; // Add this callback
+  final ValueChanged<bool> onChanged; 
 
-  CustomCheckBoxInput({
+  const CustomCheckBoxInput({
     super.key,
     required this.description,
     required this.value,
-    required this.onChanged, // Make this required
+    required this.onChanged, 
   });
 
   @override
@@ -26,7 +26,7 @@ class _CustomCheckBoxInputState extends State<CustomCheckBoxInput> {
         Checkbox(
           value: widget.value,
           onChanged: (value) {
-            widget.onChanged(value ?? false); // Notify parent
+            widget.onChanged(value ?? false); 
           },
         ),
         Text(widget.description),

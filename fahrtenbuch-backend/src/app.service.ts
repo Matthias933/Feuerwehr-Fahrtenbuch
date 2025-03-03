@@ -27,9 +27,9 @@ export class AppService {
 
   getPeople(filter: boolean): Promise<Person[]> {
     if(filter){
-      return this.personRepository.find({where: {isActive: true}, relations: { roles: true } });
+      return this.personRepository.find({where: {isActive: true}, relations: { roles: true, driveableCars: true } });
     }
-    return this.personRepository.find({relations: {roles: true}});
+    return this.personRepository.find({relations: {roles: true, driveableCars: true}});
   }
 
   async deletePerson(id: number): Promise<void> {
@@ -39,7 +39,7 @@ export class AppService {
   async editPerson(person: Person): Promise<void> {
     const existingPerson = await this.personRepository.findOne({
       where: { id: person.id },
-      relations: ['roles'],
+      relations: ['roles', 'driveableCars'],
     });
   
     if (!existingPerson) {
@@ -57,8 +57,16 @@ export class AppService {
         name: In(roleNames),
       },
     });
-  
+
+    const carNames = person.driveableCars.map(car => car.carNumber);
+    const cars = await this.carRepository.find({
+      where: {
+        carNumber: In(carNames),
+      }
+    });
+    
     existingPerson.roles = roles;
+    existingPerson.driveableCars = cars;
   
     await this.personRepository.save(existingPerson);
   }
@@ -67,14 +75,21 @@ export class AppService {
   async createPerson(person: Person): Promise<void> {
     
     const roleNames = person.roles.map(role => role.name); 
-    console.log('----------------------------' + roleNames[0]);
     const roles = await this.roleRepository.find({
       where: {
         name: In(roleNames),  
       },
     });
-    console.log('---------------------------' + roles.length);
     person.roles = roles;
+
+    const carNames = person.driveableCars.map(car => car.carNumber);
+    const cars = await this.carRepository.find({
+      where: {
+        carNumber: In(carNames),
+      }
+    });
+    person.driveableCars = cars;
+
     await this.personRepository.save(person);
   }
    
@@ -115,7 +130,7 @@ export class AppService {
   }
 
   getRide(): Promise<Ride[]> {
-    return this.rideRepository.find({relations: {rideType: true, driver: {roles: true}, commander: {roles: true}, car: true}});
+    return this.rideRepository.find({relations: {rideType: true, driver: {roles: true, driveableCars: true}, commander: {roles: true, driveableCars: true}, car: true}});
   }
 
   async postRide(createRideDto: RideDto): Promise<Ride> {

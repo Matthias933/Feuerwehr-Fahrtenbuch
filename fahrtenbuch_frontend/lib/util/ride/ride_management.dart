@@ -20,8 +20,18 @@ class RideManagement {
   List<Ride> rides = [];
   List<RideType> rideTypes = [];
 
-  RideManagement({required this.context, required this.setStateCallback})
-      : controller = RideController(), csvController = CsvController();
+ static RideManagement? _instance;
+
+   // Privater Konstruktor
+  RideManagement._(this.context, this.setStateCallback)
+      : controller = RideController(),
+        csvController = CsvController();
+
+  // Statische Methode für den Zugriff auf die Instanz
+  static RideManagement getInstance(BuildContext context, VoidCallback setStateCallback) {
+    _instance ??= RideManagement._(context, setStateCallback);
+    return _instance!;
+  }
 
   void deleteRide(int index) {
     showDialog(
@@ -180,7 +190,8 @@ class RideManagement {
     Navigator.of(context).pop();
   }
 
-  void createRide() {
+  void createRide() async {
+    print("length${rideTypes.length}");
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -311,6 +322,7 @@ class RideManagement {
   Future<void> fetchRideTypes() async {
     debugPrint('fetching all rideTypes');
     rideTypes = await controller.fetchRideTypes();
+    print("done${rideTypes.length}");
     setStateCallback();
   }
 

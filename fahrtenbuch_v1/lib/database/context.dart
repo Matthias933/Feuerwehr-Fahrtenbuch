@@ -55,10 +55,12 @@ class DBContext {
   }
 
   String getServerAddress(){
+    //return 'localhost';
     return serverInfoBox.get('address') ?? '';
   }
 
   int getServerPort(){
+    //return 3000;
     return serverInfoBox.get('port') ?? 0;
   }
 

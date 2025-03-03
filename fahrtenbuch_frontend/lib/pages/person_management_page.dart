@@ -18,13 +18,13 @@ class _PersonManagementPageState extends State<PersonManagementPage> {
     personManagement = PersonManagement(context: context, setStateCallback: () {setState(() {});});
     personManagement.fetchPeople();
 
-    PersonManagement.persons.addListener(() => refreshPersons());
+    PersonManagement.persons.addListener(refreshPersons);
   }
 
   @override
   void dispose() {
     super.dispose();
-    PersonManagement.persons.removeListener(() => refreshPersons());
+    PersonManagement.persons.removeListener(refreshPersons);
   }
 
   void refreshPersons(){

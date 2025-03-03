@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_constructors, use_build_context_synchronously
 
+import 'package:fahrtenbuch_frontend/controller/car_controller.dart';
 import 'package:fahrtenbuch_frontend/controller/person_controller.dart';
+import 'package:fahrtenbuch_frontend/models/car.dart';
 import 'package:fahrtenbuch_frontend/models/person.dart';
 import 'package:fahrtenbuch_frontend/models/role.dart';
 import 'package:fahrtenbuch_frontend/util/delete_popup.dart';
@@ -10,10 +12,11 @@ import 'package:flutter/material.dart';
 class PersonManagement {
   final BuildContext context;
   final PersonController controller;
+  final CarController carController;
   final VoidCallback setStateCallback;
   static ValueNotifier<List<Person>> persons = ValueNotifier([]);
 
-  PersonManagement({required this.context, required this.setStateCallback})  : controller = PersonController();
+  PersonManagement({required this.context, required this.setStateCallback})  : controller = PersonController(), carController = CarController();
     void deletePerson(int index){
     showDialog(context: context, barrierDismissible: false, builder: (BuildContext context){
       return DeletePopup(title: 'Person', description: 'Wenn Sie diese Person löschen werden alle anhängenden Fahrten der Person mit gelöscht!',  onDelete: () => confirmDelte(index),);
@@ -32,7 +35,8 @@ class PersonManagement {
     }
   }
 
-  void editPerson(int index) {
+  void editPerson(int index) async{
+  List<Car> cars = await carController.fetchCars();
   showDialog(
     barrierDismissible: false,
     context: context,
@@ -40,8 +44,9 @@ class PersonManagement {
       return PersonEditPopup(
         dialogName: 'Person bearbeiten',
         person: persons.value[index],
-        onSubmit: (String firstName, String lastName, bool isActive, bool isDriver, bool isCommander) {
-          confirmEdit(index, firstName, lastName, isActive, isDriver, isCommander);
+        availableCars: cars,
+        onSubmit: (String firstName, String lastName, bool isActive, bool isDriver, bool isCommander, List<Car> selectedCars) {
+          confirmEdit(index, firstName, lastName, isActive, isDriver, isCommander, selectedCars);
         },
       );
     },
@@ -49,7 +54,7 @@ class PersonManagement {
 }
 
 
- void confirmEdit(int index, String firstName, String lastName, bool isActive, bool isDriver, bool isCommander) async {
+ void confirmEdit(int index, String firstName, String lastName, bool isActive, bool isDriver, bool isCommander, List<Car> selectedCars) async {
   Person currentPerson = persons.value[index];
 
   List<Role> updatedRoles = List.from(currentPerson.Roles); 
@@ -72,6 +77,7 @@ class PersonManagement {
     LastName: lastName,
     IsActive: isActive,
     Roles: updatedRoles,
+    DriveableCars: selectedCars
   );
 
   int ret = await controller.editPerson(updatedPerson);
@@ -86,6 +92,7 @@ class PersonManagement {
 }
 
   Future<void> createPerson() async{
+    List<Car> cars = await carController.fetchCars();
     showDialog(
     barrierDismissible: false,
     context: context,
@@ -93,15 +100,16 @@ class PersonManagement {
       return PersonEditPopup(
         dialogName: 'Person Erstellen',
         person: null,
-        onSubmit: (String firstName, String lastName, bool isActive, bool isDriver, bool isCommander) async {
-          await confirmCreate(firstName, lastName, isActive, isDriver, isCommander);
+        availableCars: cars,
+        onSubmit: (String firstName, String lastName, bool isActive, bool isDriver, bool isCommander, List<Car> selectedCars) async {
+          await confirmCreate(firstName, lastName, isActive, isDriver, isCommander, selectedCars);
         },
       );
     },
   );
   }
 
-  Future<void> confirmCreate(String firstName, String lastName, bool isActive, bool isDriver, bool isCommander) async {
+  Future<void> confirmCreate(String firstName, String lastName, bool isActive, bool isDriver, bool isCommander, List<Car> selectedCars) async {
     List<Role> roles = [];
 
     if (isDriver) {
@@ -117,6 +125,7 @@ class PersonManagement {
       LastName: lastName,
       IsActive: isActive,
       Roles: roles,
+      DriveableCars: selectedCars
     );
 
     int ret = await controller.createPerson(person);

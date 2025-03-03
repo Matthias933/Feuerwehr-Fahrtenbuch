@@ -15,7 +15,8 @@ class RideEditPopup extends StatefulWidget {
   final List<String> rideTypeItems;
   final String dialogName;
   final Ride? ride;
-  final Function(String, String, String, String, String, String, int, int, int,bool,bool,bool,bool,bool,bool, String, String) onSubmit;
+  final Function(String, String, String, String, String, String, int, int, int,
+      bool, bool, bool, bool, bool, bool, String, String) onSubmit;
 
   const RideEditPopup({
     super.key,
@@ -51,31 +52,42 @@ class _RideEditPopupState extends State<RideEditPopup> {
   late TextEditingController defectsController;
   late TextEditingController missingsController;
   late CarManagement carManagement;
- 
+
+  late List<String> drivers = [];
   @override
   void initState() {
     super.initState();
     if (widget.ride != null) {
       dateController = TextEditingController(text: widget.ride!.Date);
-      carController = TextEditingController(text: widget.ride!.Vehicle!.CarNumber);
-      driverController = TextEditingController(text: '${widget.ride!.Driver!.FirstName} ${widget.ride!.Driver!.LastName}');
-      commanderController = TextEditingController(text: '${widget.ride!.Commander!.FirstName} ${widget.ride!.Commander!.LastName}');
-      rideDescriptionController = TextEditingController(text: widget.ride!.RideDescription);
-      kilometerStartController = TextEditingController(text: widget.ride!.KilometerStart.toString());
-      kilometerEndController = TextEditingController(text: widget.ride!.KilometerEnd.toString());
-      gasListerController = TextEditingController(text: widget.ride!.GasLiter.toString());
+      carController =
+          TextEditingController(text: widget.ride!.Vehicle!.CarNumber);
+      driverController = TextEditingController(
+          text:
+              '${widget.ride!.Driver!.FirstName} ${widget.ride!.Driver!.LastName}');
+      commanderController = TextEditingController(
+          text:
+              '${widget.ride!.Commander!.FirstName} ${widget.ride!.Commander!.LastName}');
+      rideDescriptionController =
+          TextEditingController(text: widget.ride!.RideDescription);
+      kilometerStartController =
+          TextEditingController(text: widget.ride!.KilometerStart.toString());
+      kilometerEndController =
+          TextEditingController(text: widget.ride!.KilometerEnd.toString());
+      gasListerController =
+          TextEditingController(text: widget.ride!.GasLiter.toString());
       defectsController = TextEditingController(text: widget.ride!.Defects);
-      missingsController = TextEditingController(text: widget.ride!.MissingItems);
+      missingsController =
+          TextEditingController(text: widget.ride!.MissingItems);
 
       rideType = widget.ride!.Type!.Name;
       usedPowerGenerator = widget.ride!.UsedPowerGenerator;
       powerGeneratorTankFull = widget.ride!.PowerGeneratorTankFull;
       usedRespiratoryProtection = widget.ride!.UsedRespiratoryProtection;
-      respiratoryProtectionUpgraded = widget.ride!.RespiratoryProtectionUpgraded;
+      respiratoryProtectionUpgraded =
+          widget.ride!.RespiratoryProtectionUpgraded;
       usedCAFS = widget.ride!.UsedCAFS;
       cafsTankFull = widget.ride!.CAFSTankFull;
-    }
-    else{
+    } else {
       dateController = TextEditingController();
       carController = TextEditingController();
       driverController = TextEditingController();
@@ -91,7 +103,13 @@ class _RideEditPopupState extends State<RideEditPopup> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint(PersonManagement.persons.value.where((driver) => driver.Roles.any((role) => role.Name == 'Maschinist')).map((person) => '${person.FirstName} ${person.LastName}').toList().length.toString());
+    debugPrint(PersonManagement.persons.value
+        .where(
+            (driver) => driver.Roles.any((role) => role.Name == 'Maschinist'))
+        .map((person) => '${person.FirstName} ${person.LastName}')
+        .toList()
+        .length
+        .toString());
     return AlertDialog(
       title: Text(widget.dialogName),
       content: SingleChildScrollView(
@@ -113,24 +131,42 @@ class _RideEditPopupState extends State<RideEditPopup> {
                   ),
                   SizedBox(height: 8),
                   AutoCompleteInput(
-                    names: CarManagement.cars.value.map((car) => car.CarNumber).toList(), 
+                    names: CarManagement.cars.value
+                        .map((car) => car.CarNumber)
+                        .toList(),
                     labelText: 'Fahrzeug *',
                     controller: carController,
+                    onSubmitted: (value) {
+                      updateDriversForSelectedCar();
+                    },
                   ),
                   SizedBox(height: 8),
                   AutoCompleteInput(
-                    names: PersonManagement.persons.value.where((driver) => driver.Roles.any((role) => role.Name == 'Maschinist')).map((person) => '${person.FirstName} ${person.LastName}').toList(), 
+                    names: drivers,
                     labelText: 'Fahrer *',
                     controller: driverController,
                   ),
                   SizedBox(height: 8),
                   AutoCompleteInput(
-                    names: PersonManagement.persons.value.where((commander) => commander.Roles.any((role) => role.Name == 'Kommandant')).map((person) => '${person.FirstName} ${person.LastName}').toList(),
+                    names: PersonManagement.persons.value
+                        .where((commander) => commander.Roles.any(
+                            (role) => role.Name == 'Kommandant'))
+                        .map((person) =>
+                            '${person.FirstName} ${person.LastName}')
+                        .toList(),
                     labelText: 'Kommandant *',
                     controller: commanderController,
                   ),
                   SizedBox(height: 8),
-                  DropDown(inputValues: widget.rideTypeItems, selectedValue: rideType, onValueChanged: (value) {setState(() {rideType = value ?? 'Unknowm';});}, labelText: 'Fahrt Typ wählen *'),
+                  DropDown(
+                      inputValues: widget.rideTypeItems,
+                      selectedValue: rideType,
+                      onValueChanged: (value) {
+                        setState(() {
+                          rideType = value ?? 'Unknowm';
+                        });
+                      },
+                      labelText: 'Fahrt Typ wählen *'),
                   SizedBox(height: 8),
                   CustomTextInput(
                     labelText: 'Zweck der Fahrt',
@@ -258,25 +294,24 @@ class _RideEditPopupState extends State<RideEditPopup> {
         ),
         TextButton(
           onPressed: () {
-           widget.onSubmit(
-              carController.text,
-              driverController.text,
-              commanderController.text,
-              dateController.text,
-              rideDescriptionController.text,
-              rideType,
-              int.parse(kilometerStartController.text),
-              int.parse(kilometerEndController.text), 
-              int.parse(gasListerController.text),
-              usedPowerGenerator,
-              powerGeneratorTankFull,
-              usedRespiratoryProtection,
-              respiratoryProtectionUpgraded,
-              usedCAFS,
-              cafsTankFull,
-              defectsController.text,
-              missingsController.text
-           );
+            widget.onSubmit(
+                carController.text,
+                driverController.text,
+                commanderController.text,
+                dateController.text,
+                rideDescriptionController.text,
+                rideType,
+                int.parse(kilometerStartController.text),
+                int.parse(kilometerEndController.text),
+                int.parse(gasListerController.text),
+                usedPowerGenerator,
+                powerGeneratorTankFull,
+                usedRespiratoryProtection,
+                respiratoryProtectionUpgraded,
+                usedCAFS,
+                cafsTankFull,
+                defectsController.text,
+                missingsController.text);
           },
           child: Text('Speichern', style: TextStyle(color: Colors.green)),
         ),
@@ -284,11 +319,22 @@ class _RideEditPopupState extends State<RideEditPopup> {
     );
   }
 
-   void navigateBack() {
+  void updateDriversForSelectedCar() {
+    setState(() {
+      drivers = PersonManagement.persons.value
+          .where(
+              (driver) => driver.Roles.any((role) => role.Name == 'Maschinist'))
+          .where((driver) => driver.DriveableCars.any(
+              (car) => car.CarNumber == carController.text))
+          .map((driver) => '${driver.FirstName} ${driver.LastName}')
+          .toList();
+    });
+    driverController.clear();
+  }
+
+  void navigateBack() {
     Navigator.of(context).pop();
   }
 
-  void submitRide() {
-    
-  }
+  void submitRide() {}
 }

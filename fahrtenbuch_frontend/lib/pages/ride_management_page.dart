@@ -29,19 +29,18 @@ class _RideManagementPageState extends State<RideManagementPage> {
   void initState() {
     super.initState();
 
-    rides.addListener(() => refreshRides());
+    rides.addListener(refreshRides);
 
-    rideManagement = RideManagement(
-      context: context,
-      setStateCallback: () {
+    rideManagement = RideManagement.getInstance(
+      context,
+      () {
         setState(() {});
       },
     );
 
-    rideManagement.fetchRideTypes().then((_){
-      setState(() {
-        
-      });
+    rideManagement.fetchRideTypes().then((_) {
+      print('pulling types');
+      setState(() {});
     });
     // Fetch rides
     rideManagement.fetchRides().then((_) {
@@ -58,10 +57,10 @@ class _RideManagementPageState extends State<RideManagementPage> {
   @override
   void dispose() {
     super.dispose();
-    rides.removeListener(() => refreshRides());
+    rides.removeListener(refreshRides);
   }
 
-  void refreshRides(){
+  void refreshRides() {
     setState(() {});
   }
 
@@ -96,21 +95,23 @@ class _RideManagementPageState extends State<RideManagementPage> {
                   flex: 2,
                   child: DropDown(
                     labelText: 'Fahrzeug wählen',
-                    inputValues:
-                        CarManagement.cars.value.map((car) => car.CarNumber).toList(),
+                    inputValues: CarManagement.cars.value
+                        .map((car) => car.CarNumber)
+                        .toList(),
                     onValueChanged: (selectedItem) {
                       selectedCar = selectedItem;
                       filterRides();
                     },
                   ),
                 ),
-                SizedBox(height: 10),
+                SizedBox(width: 10),
                 Expanded(
                   flex: 2,
                   child: DropDown(
                     labelText: 'Fahrten Typ wählen',
-                    inputValues:
-                        rideManagement.rideTypes.map((type) => type.Name).toList(),
+                    inputValues: rideManagement.rideTypes
+                        .map((type) => type.Name)
+                        .toList(),
                     onValueChanged: (selectedItem) {
                       selectedType = selectedItem;
                       filterRides();
@@ -174,7 +175,7 @@ class _RideManagementPageState extends State<RideManagementPage> {
     );
   }
 
-    void filterRides() {
+  void filterRides() {
     DateTime? start = startController.text.isNotEmpty
         ? DateTime.tryParse(startController.text)
         : null;

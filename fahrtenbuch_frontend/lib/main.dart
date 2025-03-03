@@ -8,7 +8,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 Future<void> main() async {
   await dotenv.load(fileName: ".env");
 
-  String serverName = dotenv.env['SERVR_NAME'] ?? '';
+  String serverName = dotenv.env['SERVER_NAME'] ?? '';
   String serverPort = dotenv.env['SERVER_PORT'] ?? '';
 
   Management.serverName = serverName;
@@ -16,7 +16,7 @@ Future<void> main() async {
 
   Management.baseUrl = 'http://$serverName:$serverPort/';
 
-  debugPrint('${Management.baseUrl}baseUrl');
+  debugPrint('${Management.baseUrl} => baseUrl');
   runApp(MainApp());
 }
 

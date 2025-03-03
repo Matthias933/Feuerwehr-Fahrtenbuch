@@ -42,11 +42,12 @@ class _HomePageState extends State<HomePage> {
           setState(() {});
         });
 
-    rideManagement = RideManagement(
-        context: context,
-        setStateCallback: () {
-          setState(() {});
-        });
+    rideManagement = RideManagement.getInstance(
+      context,
+      () {
+        setState(() {});
+      },
+    );
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Management.showLoginPage(context);

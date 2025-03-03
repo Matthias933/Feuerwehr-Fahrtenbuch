@@ -1,17 +1,17 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 
 class AutoCompleteInput extends StatefulWidget {
   final List<String> names;
   final String labelText;
   final TextEditingController controller;
+  final ValueChanged<String>? onSubmitted;
 
   const AutoCompleteInput({
     super.key,
     required this.names,
     required this.labelText,
     required this.controller,
+    this.onSubmitted,
   });
 
   @override
@@ -37,6 +37,7 @@ class _AutoCompleteInputState extends State<AutoCompleteInput> {
           onSelected: (String value) {
             debugPrint('You just selected $value');
             widget.controller.text = value;
+            widget.onSubmitted?.call(value);
           },
           fieldViewBuilder: (
             BuildContext context,
@@ -68,10 +69,11 @@ class _AutoCompleteInputState extends State<AutoCompleteInput> {
               controller: textEditingController,
               focusNode: focusNode,
               onSubmitted: (String value) {
+                widget.onSubmitted?.call(value);
                 onFieldSubmitted();
               },
               decoration: InputDecoration(
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
                 labelText: widget.labelText,
                 errorText: inputChanged ? 'Bitte korrekten Namen eingeben' : null,
               ),

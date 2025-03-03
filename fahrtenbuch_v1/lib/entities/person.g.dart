@@ -22,13 +22,14 @@ class PersonAdapter extends TypeAdapter<Person> {
       LastName: fields[2] as String,
       IsActive: fields[3] as bool,
       Roles: (fields[4] as List).cast<Role>(),
+      DriveableCars: (fields[5] as List).cast<Car>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Person obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.Id)
       ..writeByte(1)
@@ -38,7 +39,9 @@ class PersonAdapter extends TypeAdapter<Person> {
       ..writeByte(3)
       ..write(obj.IsActive)
       ..writeByte(4)
-      ..write(obj.Roles);
+      ..write(obj.Roles)
+      ..writeByte(5)
+      ..write(obj.DriveableCars);
   }
 
   @override

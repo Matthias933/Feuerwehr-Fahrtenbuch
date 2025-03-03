@@ -40,6 +40,8 @@ class _CreateRidePageState extends State<CreateRidePage> {
   bool cafsTankFull = false;
   DBContext dbContext = DBContext();
 
+  List<String> drivers = [];
+
   @override
   void initState() {
     super.initState();
@@ -49,11 +51,12 @@ class _CreateRidePageState extends State<CreateRidePage> {
     dateController.text = dateFormat.format(DateTime.now());
     String previousCarName = dbContext.getPreviousCarName();
     int previousKilometer = dbContext.getPreviousKilometeR();
-    if(previousCarName.isNotEmpty){
-        carController.text = previousCarName;
+    if (previousCarName.isNotEmpty) {
+      carController.text = previousCarName;
+      updateDriversForSelectedCar();
     }
-    if(previousKilometer != 0){
-        kilometerStartController.text = previousKilometer.toString();
+    if (previousKilometer != 0) {
+      kilometerStartController.text = previousKilometer.toString();
     }
 
     //updated the ui after all changed are applied
@@ -65,15 +68,12 @@ class _CreateRidePageState extends State<CreateRidePage> {
     List<String> commanders = dbContext.getCommanders().map((commander) {
       return '${commander.FirstName} ${commander.LastName}';
     }).toList();
-    List<String> drivers = dbContext.getDrivers().map((driver) {
-      return '${driver.FirstName} ${driver.LastName}';
-    }).toList();
 
-    List<String> cars = dbContext.getCars().map((car){
+    List<String> cars = dbContext.getCars().map((car) {
       return '${car.CarNumber}';
     }).toList();
 
-    List<String> rideTypes = dbContext.getRideTypes().map((rideType){
+    List<String> rideTypes = dbContext.getRideTypes().map((rideType) {
       return '${rideType.Name}';
     }).toList();
 
@@ -115,6 +115,9 @@ class _CreateRidePageState extends State<CreateRidePage> {
                             names: cars,
                             labelText: 'Fahrzeug *',
                             controller: carController,
+                            onSubmitted: (value) {
+                              updateDriversForSelectedCar();
+                            },
                           ),
                           SizedBox(height: 8),
                           CustomDateTimeInput(
@@ -134,7 +137,14 @@ class _CreateRidePageState extends State<CreateRidePage> {
                             controller: commanderController,
                           ),
                           SizedBox(height: 8),
-                          DropDown(inputValues: rideTypes, onValueChanged: (value) {setState(() {rideType = value ?? 'Unknown';});}, labelText: 'Fahrt Typ wählen *'),
+                          DropDown(
+                              inputValues: rideTypes,
+                              onValueChanged: (value) {
+                                setState(() {
+                                  rideType = value ?? 'Unknown';
+                                });
+                              },
+                              labelText: 'Fahrt Typ wählen *'),
                           SizedBox(height: 8),
                           CustomTextInput(
                             labelText: 'Zweck der Fahrt ',
@@ -323,6 +333,22 @@ class _CreateRidePageState extends State<CreateRidePage> {
         ));
   }
 
+  void updateDriversForSelectedCar() {
+    setState(() {
+      String selectedCarNumber = carController.text;
+      drivers = dbContext
+          .getDrivers()
+          .where((driver) {
+            return driver.DriveableCars.any(
+                (car) => car.CarNumber == selectedCarNumber);
+          })
+          .map((driver) => '${driver.FirstName} ${driver.LastName}')
+          .toList();
+    });
+    driverController.clear();
+    print(drivers.length);
+  }
+
   //place for function
   void submitRide() {
     if (dateController.text.isNotEmpty &&
@@ -332,7 +358,7 @@ class _CreateRidePageState extends State<CreateRidePage> {
         driverController.text.isNotEmpty &&
         commanderController.text.isNotEmpty &&
         rideType.isNotEmpty) {
-      //requierd fields are filled out 
+      //requierd fields are filled out
       Ride ride = assignRide();
 
       if (ApiController.isConnected) {
@@ -359,7 +385,8 @@ class _CreateRidePageState extends State<CreateRidePage> {
           Icon(
             Icons.info,
             color: Colors.white,
-          ), Colors.green);
+          ),
+          Colors.green);
     }
     dbContext.setPreviousRide(ride);
     navigateBack();
@@ -372,7 +399,8 @@ class _CreateRidePageState extends State<CreateRidePage> {
         Icon(
           Icons.info,
           color: Colors.white,
-        ), Colors.blue);
+        ),
+        Colors.blue);
     navigateBack();
   }
 

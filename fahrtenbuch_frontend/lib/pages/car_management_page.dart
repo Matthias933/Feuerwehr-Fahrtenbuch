@@ -18,7 +18,7 @@ class _CarManagementPageState extends State<CarManagementPage> {
   void initState() {
     super.initState();
 
-    CarManagement.cars.addListener(() => refreshCars());
+    CarManagement.cars.addListener(refreshCars);
 
     carManagement = CarManagement(context: context, setStateCallback: () {setState(() {});});
     carManagement.fetchCars();
@@ -27,7 +27,7 @@ class _CarManagementPageState extends State<CarManagementPage> {
   @override
   void dispose() {
     super.dispose();
-    CarManagement.cars.removeListener(() => refreshCars());
+    CarManagement.cars.removeListener(refreshCars);
   }
 
   void refreshCars(){
